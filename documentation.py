@@ -1,3 +1,5 @@
+# this line is a git test
+
 strength_doc = """In this program, weld strength is calculated using formula XXX in AISC 360:
                   phiRn = 1.392 * t, where t is the weld throat in sixteenths of an inch.
                   the phi value included in phiRn is the only strength reduction factor considered in these equations."""
