@@ -1,24 +1,24 @@
 # NOTE: IN THIS CLASS, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
 
-# NOTE: IN THIS CLASS, LENGTH IS ALWAYS EXPRESSED IN INCHES. 
+# NOTE: IN THIS CLASS, LENGTH IS ALWAYS EXPRESSED IN INCHES.
 # ANY ADJUSTMENTS TO FT ARE MADE OUTSIDE OF THE CLASS.
 
 # flare_bevel_strengths = {1: 0.803,
 #                          2: 1.605,
-#                          3; 2.408,
-#                          4; 3.211,
-#                          5; 4.013,
-#                          6; 4.816,
-#                          7; 5.618,
-#                          8; 6.421,
-#                          9; 7.224,
-#                          10; 8.026,
+#                          3: 2.408,
+#                          4: 3.211,
+#                          5: 4.013,
+#                          6: 4.816,
+#                          7: 5.618,
+#                          8: 6.421,
+#                          9: 7.224,
+#                          10: 8.026,
 #                          }
 
 
 class WeldGroup:
-
+    # class constructor
     def __init__(self, t: int = 3, group: str = '=', b: float = 0, d: float = 0, isFlareBevel: bool = False, t_HSS: int = 4):
         self.t = t
         self.group = group
@@ -27,7 +27,7 @@ class WeldGroup:
         self.isFlareBevel = isFlareBevel
         self.t_HSS = t_HSS
 
-        # calculate effective throat of flare bevel from t_HSS if HSS is selected
+        # if flare bevel selected, calculate effective throat of flare bevel from t_HSS
         if isFlareBevel:
             # print("\n\n CALCULATING A FLARE BEVEL WELD\n\n")
             self.R = 0.93 * 2 * t_HSS
@@ -44,12 +44,12 @@ class WeldGroup:
         on its dimensions and weld strength. Assign the section properties
         to the global variables.
 
-        :param group:
+        :param group: selected weld group 
         :param b: width of group in x-direction (horizontal)
         :param d: height of group in y-direction (vertical)
         """
 
-        # round small group dimensions to zero to discourage tiny welds
+        # round small group dimensions to zero
         if (b < 1.0) and (d < 1.0):
             length = 0
             Sx = 0
@@ -130,15 +130,6 @@ class WeldGroup:
             c = (Ct**2 + (b / 2)**2)**0.5  # check
             PM = J / c
 
-        # possible future addition
-        # elif group == "Ⅱ":
-        #     length = 2 * (b + d)
-        #     Sx = d / 3 * (3 * b + d)
-        #     Sy = b**2 / 3
-        #     J = d**2 / 6 * (3 * b + d) + b**2 / 6
-        #     c = (b**2 + d**2)**0.5 / 2
-        #     PM = J / c
-
         elif group == "⌶":
             length = 2 * (2 * b + d)
             Sx = d / 3 * (6 * b + d)
@@ -165,11 +156,13 @@ class WeldGroup:
 
         return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
 
+
     def properties(self):
-        # update properties in case of change to attributes
+        # updates section properties and returns them. Useful in case of changes to attributes
         self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
             self.group, self.b, self.d, self.weld_strength)
         return self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn
+
 
     def check(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = self.properties()
