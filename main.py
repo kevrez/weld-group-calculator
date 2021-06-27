@@ -1,16 +1,12 @@
 from tkinter import *
 from tkinter.filedialog import asksaveasfilename, askopenfilenames
-# from matplotlib import pyplot as plt
-# from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
-# from weldgroup import WeldGroup
 import pickle
 from weldapp import Application
 
 # NOTE: IN THIS PROGRAM, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
 
+VERSION = '0.9 Beta  -  DO NOT USE FOR DESIGN'
 
 def savedata():
     global filename
@@ -41,10 +37,8 @@ def savedata():
 
 def saveasdata():
     global filename
-    # filename = asksaveasfilename(filetypes=("Text files", "*.txt"), defaultextension='.txt', title='weld')
     filename = asksaveasfilename(title='Choose Filename', defaultextension='.txt', filetypes=[('Text Files', '*.txt')])
     if not filename:
-        # print("No file loaded")
         return
     # print("saving as -> " + filename)
     savedata()
@@ -70,7 +64,6 @@ def loaddata():
             app.selected_hss_thickness.set(var_selected_hss_thickness)
             app.selected_weld_group.set(var_selected_weld_group)
             app.units.set(units)
-
 
             app.entry_b.delete(0, END)
             app.entry_b.insert(0, b)
@@ -106,7 +99,7 @@ def resetter(to_be_destroyed):
     global root
     to_be_destroyed.destroy()
     global app
-    app = Application(root)
+    app = Application(root, VERSION)
     
 
 
@@ -143,7 +136,7 @@ if __name__ == '__main__':
 
     root.config(menu=menubar)
     root.protocol("WM_DELETE_WINDOW", root.quit)
-    app = Application(root)
+    app = Application(root, VERSION)
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
     app.grid(sticky='nsew')
