@@ -1,48 +1,50 @@
 from tkinter import *
 from matplotlib import pyplot as plt
-# from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg) # NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from weldgroup import WeldGroup
 from datetime import datetime
 
 
 class Application(Frame):
 
-    def __init__(self, master):
+    def __init__(self, master, version):
+        self.VERSION = version
         super().__init__(master)
         self.grid()
-        self.initialize()
+        self.draw_ui()
 
 
-    def initialize(self):
+    def draw_ui(self):
         self.title_status = Label(self, text="Weld Type: E70XX  -  AISC 360")
         self.title_status.grid(row=30, column=3, sticky='se', padx=(0, 25))
 
         self.year = datetime.today().strftime("%Y")
-        self.title_copyright = Label(self, text=f"© Kevin Reznicek {self.year}")
-        self.title_copyright.grid(row=30, column=0, sticky='sw', padx=(25, 0))
+        self.title_copyright = Label(self, text=f"© Kevin Reznicek {self.year}  -  V{self.VERSION}")
+        self.title_copyright.grid(row=30, column=0, columnspan=2,sticky='sw', padx=(25, 0))
 
         # draw labelframes and widgets
-        self.setup_weldtype()
-        self.setup_weldgroup()
-        self.setup_units()
-        self.setup_loads()
-        self.setup_results()
-        self.setup_preview()
+        self.draw_weldtype()
+        self.draw_weldgroup()
+        self.draw_units()
+        self.draw_loads()
+        self.draw_results()
+        self.draw_preview()
+
+        # add trace functions to Tk inputs
+        self.add_traces()
 
         # draw CALCULATE button
-        self.run_button = Button(self, text="RECALCULATE", command=self.runrun, pady=5, padx=10)
-        self.run_button.grid(row=3, column=2, pady=(5, 0), padx=(15, 10), sticky='nesw')
-        # self.run_button["state"] = "normal"
+        # self.run_button = Button(self, text="RECALCULATE", command=self.recalc_full, pady=5, padx=10)
+        # self.run_button.grid(row=3, column=2, pady=(5, 0), padx=(15, 10), sticky='nesw')
+        # # self.run_button["state"] = "normal"
 
-        # draw RESET PLOT buton
-        self.reset_plot_button = Button(self, text="RESET PLOT", command=self.reset_plot, pady=5, padx=10)
-        self.reset_plot_button.grid(row=3, column=3, pady=(5, 0), padx=(5, 25), sticky='nesw')
+        # # draw RESET PLOT buton
+        # self.reset_plot_button = Button(self, text="RESET PLOT", command=self.reset_plot, pady=5, padx=10)
+        # self.reset_plot_button.grid(row=3, column=3, pady=(5, 0), padx=(5, 25), sticky='nesw')
 
         # enable resizing to follow window size
         for i in range(3):
             self.rowconfigure(i, weight=1)
-
         for i in range(2):
             self.columnconfigure(i, weight=2)
         for i in range(2,4):
@@ -52,7 +54,7 @@ class Application(Frame):
         self.rowconfigure(2, weight=2)
 
 
-    def setup_weldtype(self):
+    def draw_weldtype(self):
 
         ##### set up Weld Type LabelFrame, variables, widgets #####
 
@@ -95,17 +97,14 @@ class Application(Frame):
         # set up variable for weld type
         self.weldtype = StringVar(self)
         self.weldtype.set("f")  # default value
-        self.weldtype.trace_add('write', self.runrun)
 
         # set up variable for hss thickness
         self.selected_hss_thickness = StringVar(self)
         self.selected_hss_thickness.set(self.hss_thickness_options[2])  # default value
-        self.selected_hss_thickness.trace_add('write', self.runrun)
 
         # fillet weld size variable
         self.selected_throat = StringVar(self)
         self.selected_throat.set(self.fillet_options[1])  # default value
-        self.selected_throat.trace_add('write', self.runrun)
 
         # set up master variable for selected weld strength
         self.text_weld_strength = StringVar(self)
@@ -164,7 +163,7 @@ class Application(Frame):
         # self.columnconfigure(1, weight=2)
 
 
-    def setup_weldgroup(self):
+    def draw_weldgroup(self):
 
         ##### set up Weld Group LabelFrame, variables, widgets #####
 
@@ -187,7 +186,6 @@ class Application(Frame):
         # variable for selected weld group
         self.selected_weld_group = StringVar(self)
         self.selected_weld_group.set(self.weld_group_options[self.weld_group_options.index("=")])  # default value
-        self.selected_weld_group.trace_add('write', self.runrun)
 
         ### widgets ###
 
@@ -204,19 +202,12 @@ class Application(Frame):
         self.label_group = Label(self.f_weld_group, text='Group:')
         self.label_group.grid(row=0, column=0, padx=(self.PADX_WELD_GROUP), pady=self.PADY_WELD_GROUP, sticky='w')
 
-        # # weld group selection text
-        # self.label_selected_group = Label(self.f_weld_group, text="Selected\nGroup: ")
-        # self.label_selected_group.grid(row=1, column=0, columnspan=2, padx=self.PADX_WELD_GROUP, sticky='w')
-        # self.label_weld_group = Label(self.f_weld_group, textvariable=self.selected_weld_group, font='helvetica 32 bold')
-        # self.label_weld_group.grid(row=1, column=2, sticky='new')
-
         # b and d text variables for property entry boxes
         self.var_b = StringVar(self)
         self.var_b.set("0")
         self.var_d = StringVar(self)
         self.var_d.set("0")
-        self.var_b.trace_add('write', self.runrun)
-        self.var_d.trace_add('write', self.runrun)
+
 
         # b label
         self.label_b = Label(self.f_weld_group, text="b:")
@@ -250,7 +241,7 @@ class Application(Frame):
         self.f_weld_group.rowconfigure(1, weight=2)
 
 
-    def setup_units(self):
+    def draw_units(self):
 
         ##### set up Weld Group LabelFrame, variables, widgets #####
 
@@ -260,8 +251,6 @@ class Application(Frame):
 
         self.units = StringVar(self)
         self.units.set('in') # default value
-
-        self.units.trace_add('write', self.runrun)
 
         self.radio_units = Radiobutton(self.f_units, text="kip-in", value="in", variable=self.units)
         self.radio_units.grid(row=0, column=0, padx=(10, 0), pady=(5, 5), sticky='nsew')
@@ -274,7 +263,7 @@ class Application(Frame):
             self.f_units.columnconfigure(i, weight=1)
 
 
-    def setup_loads(self):
+    def draw_loads(self):
 
         ##### set up Loads LabelFrame, widgets #####
 
@@ -317,13 +306,6 @@ class Application(Frame):
         self.var_Au.set("0")
         self.var_Tu.set("0")
 
-        # add traces for property entry boxes
-        self.var_Mux.trace_add('write', self.runrun)
-        self.var_Muy.trace_add('write', self.runrun)
-        self.var_Vux.trace_add('write', self.runrun)
-        self.var_Vuy.trace_add('write', self.runrun)
-        self.var_Au.trace_add('write', self.runrun)
-        self.var_Tu.trace_add('write', self.runrun)
 
         # property entry boxes
         self.ENTRY_WIDTH = 7
@@ -362,7 +344,7 @@ class Application(Frame):
             self.f_loads.columnconfigure(i, weight=1)
 
 
-    def setup_results(self):
+    def draw_results(self):
 
         ##### set up Results LabelFrame, variables, widgets #####
 
@@ -492,7 +474,7 @@ class Application(Frame):
             self.f_results.columnconfigure(i, weight=1)
 
 
-    def setup_preview(self):
+    def draw_preview(self):
         ##### set up Plot LabelFrame, variables, widgets #####
 
         ### LabelFrame ###
@@ -505,10 +487,10 @@ class Application(Frame):
         self.f_plot.grid(row=0, column=2, padx=(5, 25), pady=(10, 0), rowspan=3, columnspan=2, sticky='nse')
 
         # draw plot
-        self.drawplot()
+        self.draw_plot()
 
         
-    def drawplot(self):
+    def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(figsize=(3.8, 10)) # figsize=(4.6, 4.3)
         self.fig1.set_tight_layout(True)
         self.ax1.axvline(color='black', linestyle=':')
@@ -524,208 +506,31 @@ class Application(Frame):
         self.canvas.draw()
 
         self.toolbar = None
-        # self.toolbar = Navigationself.toolbar2Tk(self.canvas, self.f_plot, pack_self.toolbar=True)
-        # self.toolbar.update()
 
         self.tkwidget = self.canvas.get_tk_widget()
         self.tkwidget.grid(sticky='nsew')
 
 
-    def fillet_strength(self, throat: float) -> float:
-        """
-        Calculate the strength of a weld with an optional length parameter.
+    def add_traces(self):
+        self.weldtype.trace_add('write', self.recalc_results)
+        self.selected_hss_thickness.trace_add('write', self.recalc_results)
+        self.selected_throat.trace_add('write', self.recalc_results)
+        self.selected_weld_group.trace_add('write', self.recalc_full)
 
-        :param throat: Fillet weld throat in sixteenths of an inch.
-            Ex. Input `3` for a 3/16" fillet weld.
+        self.var_b.trace_add('write', self.recalc_full)
+        self.var_d.trace_add('write', self.recalc_full)
 
-        :return: Strength of weld in kips/in
-        """
-        strength = 1.392 * throat
-        # save for future development
-        # if consider_angle:
-        #     angle *= 3.1415926535 / 180 # convert angle from deg to radians
-        #     strength *= (1 + 0.5 * (math.sin(angle) ** 1.5))
-        return strength
+        self.units.trace_add('write', self.recalc_results)
 
-
-    def flare_bevel_eff_throat_from_HSS_t(self, t: float) -> float:
-        """
-        Return the effective throat of a flare bevel weld between a flat
-            and a radiused surface. Assumes filled flush to face of HSS.
-
-            Note: t can be inputted in inches or sixteenths of an inch,
-            the output will be in the same unit.
-        :param radius: Outer radius of welded element
-        :return: Effective throat
-        """
-        radius = 0.93 * 2 * t
-        return 5 / 16 * radius
+        self.var_Mux.trace_add('write', self.recalc_results)
+        self.var_Muy.trace_add('write', self.recalc_results)
+        self.var_Vux.trace_add('write', self.recalc_results)
+        self.var_Vuy.trace_add('write', self.recalc_results)
+        self.var_Au.trace_add('write', self.recalc_results)
+        self.var_Tu.trace_add('write', self.recalc_results)
 
 
-    def flare_v_eff_throat(self, radius: float) -> float:
-        """
-        Return the effective throat of a flare-V weld between two radiused
-            surfaces. Assumes filled flush to face of HSS.
-        :param radius: Outer radius of welded element. Select smallest
-            radius if working with HSS of different thickness.
-        :return: Effective throat
-        """
-        return 0.61 * radius
-
-
-    def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0, weld_strength: float = 0) -> None:
-        """
-        Calculate the 'section' properties of the inputted weld group based
-        on its dimensions and weld strength. Assign the section properties
-        to the global variables.
-
-        :param group:
-        :param b: width of group in x-direction (horizontal)
-        :param d: height of group in y-direction (vertical)
-        """
-
-        # initialize variables since all assignments are within 'if' clauses
-        # Python thinks the variables may not be assigned when linting
-        length = 0
-        Sx = 0
-        Sy = 0
-        J = 0
-        PM = 0
-        c = 0
-
-        # round small group dimensions to zero to discourage tiny welds
-        if (b < 1.0) and (d < 1.0):
-            Sx = 0
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        # calculate different properties based on weld group
-        elif group == '|':
-            length = d
-            Sx = d ** 2 / 6
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        elif group == '-':
-            length = b
-            Sx = b ** 2 / 6
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        elif group == '||':
-            length = b + d
-            Sx = d ** 2 / 3
-            Sy = b * d
-            J = d / 6 * (3 * b ** 2 + d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        elif group == '=':
-            length = 2 * b
-            Sx = b * d
-            Sy = b ** 2 / 3
-            J = b / 6 * (b ** 2 + 3 * d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        elif group == '▯':
-            length = 2 * b + 2 * d
-            Sx = d / 3 * (3 * b + d)
-            Sy = b / 3 * (b + 3 * d)
-            J = (b + d) ** 3 / 6
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        # CHECK ALL THE FORMULAS BELOW THIS
-
-        elif group == '⨅':
-            length = b + 2 * d
-            # check, there are multiple Sx values shown
-            Sx = d / 3 * (2 * b + d)
-            Sy = b / 6 * (b + 6 * d)
-            J = d**2 / 3 * ((2 * b + d)/(b + 2 * d)) + \
-                b**2 / 12 * (b + 6 * d)  # check
-            Nx = d**2 / (b + 2 * d)
-            c = (Nx**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╥':
-            length = b + 2 * d
-            Sx = d / 3 * (2 * b + d)
-            Sy = b**2 / 6
-            J = d**3 / 3 * (2 * b + d)/(b + 2 * d) + b**3 / 12  # check
-            Ct = d**2 / (b + 2 * d)  # check
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╦':
-            length = 2 * (b + d)
-            Sx = d / 3 * (4 * b + d)
-            Sy = b / 3
-            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**2 / 6  # check
-            Ct = d**2 / (2 * (b + d))
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        # possible future addition
-        # elif group == "Ⅱ":
-        #     length = 2 * (b + d)
-        #     Sx = d / 3 * (3 * b + d)
-        #     Sy = b**2 / 3
-        #     J = d**2 / 6 * (3 * b + d) + b**2 / 6
-        #     c = (b**2 + d**2)**0.5 / 2
-        #     PM = J / c
-
-        elif group == "⌶":
-            length = 2 * (2 * b + d)
-            Sx = d / 3 * (6 * b + d)
-            Sy = 2 / 3 * b**2
-            J = d**2 / 6 * (6 * b + d) + b**3 / 3
-            c = (b**2 + d**2)**0.5 / 2
-            PM = J / c
-
-        # assign properties
-        phiMnx = weld_strength * Sx
-        phiMny = weld_strength * Sy
-        phiVnx = weld_strength * length
-        phiVny = weld_strength * length
-        phiTn = weld_strength * PM
-        phiAn = weld_strength * length
-
-        return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
-
-
-    def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
-                      phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
-
-        print(f"weld group is {wg}")
-        print(f"weld type is {weldtype.get()}")
-        print(f"throat is {throat}")
-        print(f"weld strength is {weld_strength}")
-        print(f"phiMnx = {phiMnx:.1f}")
-        print(f"phiMny = {phiMny:.1f}")
-        print(f"phiVnx = {phiVnx:.1f}")
-        print(f"phiVny = {phiVny:.1f}")
-        print(f"phiAn = {phiAn:.1f}")
-        print(f"phiTn = {phiTn:.1f}")
-        print(f"Mux = {Mux}")
-        print(f"Muy = {Muy}")
-        print(f"Vux = {Vux}")
-        print(f"Vuy = {Vuy}")
-        print(f"Au = {Au}")
-        print(f"Tu = {Tu}")
-        print(f"isFlareBevel is {isFlareBevel}")
-        print(f"HSS thickness is {hss_thickness}")
-        print()
-
-
-    def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, tk_master=None, works=False, canvas=None, toolbar=None):
+    def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
 
         ax1.clear()
 
@@ -734,11 +539,9 @@ class Application(Frame):
         ax1.set(xlabel='Y', ylabel='X')
         ax1.minorticks_on()
         spa = max(b, d) / 60
-        # print(f"spacing = {spa}")
         self.ax1.relim()
 
         # calculate different properties based on weld group
-
         if group == '|':
             x1 = [0, 0]
             y1 = [-d/2, d/2]
@@ -879,17 +682,24 @@ class Application(Frame):
 
     def reset_plot(self):
         self.tkwidget.destroy()
-        self.drawplot()
-        self.runrun()
+        self.draw_plot()
+        self.recalc_full()
         # self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d, tk_master=self.f_plot, works=works, canvas=self.canvas, toolbar=None)
 
 
-    def runrun(self, *args): # *args is necessary to trace variables with function
-        """
-        Take in all inputs from GUI, calculate outputs, draw outputs.
-        """
-        # global weld_strength # since this is assigned elsewhere
+    def set_results_NA(self):
+        self.var_total_util.set("N/A")
+        self.label_total_utilization.config(font="helvetica 9 bold", fg="red")
+        self.var_phiMnx_util.set(f"N/A")
+        self.var_phiMny_util.set(f"N/A")
+        self.var_phiVnx_util.set(f"N/A")
+        self.var_phiVny_util.set(f"N/A")
+        self.var_phiAn_util.set(f"N/A")
+        self.var_phiTn_util.set(f"N/A")
 
+
+    def recalc_results(self, works=True, *args):
+        
         ##########  WELD TYPE  ##########
         # take in variables
         wg = self.selected_weld_group.get()
@@ -913,7 +723,7 @@ class Application(Frame):
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                                isFlareBevel=isFlareBevel, t_HSS=hss_thickness)
         except:
-            # print("\n\n\n\n\nDID NOT COMPLETE CALCULATION\n\n\n\n\n")
+            self.set_results_NA()
             return
 
         # calculate section properties based on inputs
@@ -936,8 +746,6 @@ class Application(Frame):
             phiMnx /= 12
             phiMny /= 12
             phiTn /= 12
-
-
         else:
             self.units_moment.set('kip-in')
 
@@ -961,87 +769,86 @@ class Application(Frame):
         # not run calcs if any input is > 0 when the associated property is zero.
         # In that case, set 'works' to False and the total output will be 'N/A'
 
-        works = True
-
         # for each section property: check for the case mentioned above,
         # calculate utilization, draw utilization
         # Mnx
-        if (phiMnx == 0) and (Mux != 0):  # force inputted but zero for the section property
-            self.var_phiMnx_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiMnx = Mux / phiMnx * 100  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiMnx = 0
-                # delete for deployment
-                # print("phiMnx is 0 and force provided is 0")
-            self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
+        if works:
+            if (phiMnx == 0) and (Mux != 0):  # force inputted but zero for the section property
+                self.var_phiMnx_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiMnx = Mux / phiMnx * 100  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiMnx = 0
+                    # delete for deployment
+                    # print("phiMnx is 0 and force provided is 0")
+                self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
 
-        # Mny
-        if (phiMny == 0) and (Muy != 0):  # force inputted but zero for the section property
-            self.var_phiMny_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiMny = Muy / phiMny * 100  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiMny = 0
-                # delete for deployment
-                # print("phiMny is 0 and force provided is 0")
-            self.var_phiMny_util.set(f"{util_phiMny:.1f} %")
+            # Mny
+            if (phiMny == 0) and (Muy != 0):  # force inputted but zero for the section property
+                self.var_phiMny_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiMny = Muy / phiMny * 100  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiMny = 0
+                    # delete for deployment
+                    # print("phiMny is 0 and force provided is 0")
+                self.var_phiMny_util.set(f"{util_phiMny:.1f} %")
 
-        # Vnx
-        if (phiVnx == 0) and (Vux != 0):  # force inputted but zero for the section property
-            self.var_phiVnx_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiVnx = Vux / phiVnx * 100  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiVnx = 0
-                # delete for deployment
-                # print("phiVnx is 0 and force provided is 0")
-            self.var_phiVnx_util.set(f"{util_phiVnx:.1f} %")
+            # Vnx
+            if (phiVnx == 0) and (Vux != 0):  # force inputted but zero for the section property
+                self.var_phiVnx_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiVnx = Vux / phiVnx * 100  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiVnx = 0
+                    # delete for deployment
+                    # print("phiVnx is 0 and force provided is 0")
+                self.var_phiVnx_util.set(f"{util_phiVnx:.1f} %")
 
-        # Vny
-        if (phiVny == 0) and (Vuy != 0):  # force inputted but zero for the section property
-            self.var_phiVny_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiVny = Vuy / phiVny * 100  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiVny = 0
-                # delete for deployment
-                # print("phiVny is 0 and force provided is 0")
-            self.var_phiVny_util.set(f"{util_phiVny:.1f} %")
+            # Vny
+            if (phiVny == 0) and (Vuy != 0):  # force inputted but zero for the section property
+                self.var_phiVny_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiVny = Vuy / phiVny * 100  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiVny = 0
+                    # delete for deployment
+                    # print("phiVny is 0 and force provided is 0")
+                self.var_phiVny_util.set(f"{util_phiVny:.1f} %")
 
-        # An
-        if (phiAn == 0) and (Au != 0):  # force inputted but zero for the section property
-            self.var_phiAn_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiAn = Au / phiAn * 100  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiAn = 0
-                # delete for deployment
-                # print("An is 0 and force provided is 0")
-            self.var_phiAn_util.set(f"{util_phiAn:.1f} %")
+            # An
+            if (phiAn == 0) and (Au != 0):  # force inputted but zero for the section property
+                self.var_phiAn_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiAn = Au / phiAn * 100  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiAn = 0
+                    # delete for deployment
+                    # print("An is 0 and force provided is 0")
+                self.var_phiAn_util.set(f"{util_phiAn:.1f} %")
 
-        # Tn
-        if (phiTn == 0) and (Tu != 0):  # force inputted but zero for the section property
-            self.var_phiTn_util.set("N/A")
-            works = False
-        else:
-            try:
-                util_phiTn = (Tu / phiTn * 100)  # individual utilization
-            except ZeroDivisionError:  # in case we get a 0/0
-                util_phiTn = 0
-                # delete for deployment
-                # print("Tn is 0 and force provided is 0")
-            self.var_phiTn_util.set(f"{util_phiTn:.1f} %")
+            # Tn
+            if (phiTn == 0) and (Tu != 0):  # force inputted but zero for the section property
+                self.var_phiTn_util.set("N/A")
+                works = False
+            else:
+                try:
+                    util_phiTn = (Tu / phiTn * 100)  # individual utilization
+                except ZeroDivisionError:  # in case we get a 0/0
+                    util_phiTn = 0
+                    # delete for deployment
+                    # print("Tn is 0 and force provided is 0")
+                self.var_phiTn_util.set(f"{util_phiTn:.1f} %")
 
         if works:
             # calculate total utilization as sum of individual utilizations
@@ -1065,16 +872,50 @@ class Application(Frame):
                     font="helvetica 9 bold", fg="red")
 
         else:
-            # if we have an illegal case, don't calculate anything and print 'N/A'
-            self.var_total_util.set("N/A")
-            self.label_total_utilization.config(
-                font="helvetica 9 bold", fg="red")
-            # label_utilization.grid(row=16, column=3)
+            self.set_results_NA()
+
+
+    def recalc_full(self, *args): # *args is necessary to trace variables with function
+        """
+        Take in inputs from GUI, calculate outputs, draw outputs.
+        """
+        works = True
+        wg = self.selected_weld_group.get()
+        try:
+            b = float(self.var_b.get())
+            d = float(self.var_d.get())
+        except ValueError:
+            b = 0
+            d = 0
+            works = False
+            pass
+
 
         # plot preview of weld group
         self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
-                       tk_master=self.f_plot, works=works, canvas=self.canvas, toolbar=None)
+                       canvas=self.canvas)
+        self.recalc_results(works=works)
 
-        # diagnostic printing of values to terminal
-        # print('\n')
-        # self.print_summary(wg, self.weldtype, throat, weld_group.weld_strength, phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness)
+
+    def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
+                      phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
+
+        print(f"weld group is {wg}")
+        print(f"weld type is {weldtype.get()}")
+        print(f"throat is {throat}")
+        print(f"weld strength is {weld_strength}")
+        print(f"phiMnx = {phiMnx:.1f}")
+        print(f"phiMny = {phiMny:.1f}")
+        print(f"phiVnx = {phiVnx:.1f}")
+        print(f"phiVny = {phiVny:.1f}")
+        print(f"phiAn = {phiAn:.1f}")
+        print(f"phiTn = {phiTn:.1f}")
+        print(f"Mux = {Mux}")
+        print(f"Muy = {Muy}")
+        print(f"Vux = {Vux}")
+        print(f"Vuy = {Vuy}")
+        print(f"Au = {Au}")
+        print(f"Tu = {Tu}")
+        print(f"isFlareBevel is {isFlareBevel}")
+        print(f"HSS thickness is {hss_thickness}")
+        print()
