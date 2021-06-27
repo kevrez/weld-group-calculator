@@ -1,19 +1,19 @@
 # NOTE: IN THIS CLASS, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
 
-# NOTE: IN THIS CLASS, LENGTH IS ALWAYS EXPRESSED IN INCHES. 
+# NOTE: IN THIS CLASS, LENGTH IS ALWAYS EXPRESSED IN INCHES.
 # ANY ADJUSTMENTS TO FT ARE MADE OUTSIDE OF THE CLASS.
 
 # flare_bevel_strengths = {1: 0.803,
 #                          2: 1.605,
-#                          3; 2.408,
-#                          4; 3.211,
-#                          5; 4.013,
-#                          6; 4.816,
-#                          7; 5.618,
-#                          8; 6.421,
-#                          9; 7.224,
-#                          10; 8.026,
+#                          3: 2.408,
+#                          4: 3.211,
+#                          5: 4.013,
+#                          6: 4.816,
+#                          7: 5.618,
+#                          8: 6.421,
+#                          9: 7.224,
+#                          10: 8.026,
 #                          }
 
 
@@ -27,7 +27,7 @@ class WeldGroup:
         self.isFlareBevel = isFlareBevel
         self.t_HSS = t_HSS
 
-        # calculate effective throat of flare bevel from t_HSS if HSS is selected
+        # if flare bevel selected, calculate effective throat of flare bevel from t_HSS
         if isFlareBevel:
             # print("\n\n CALCULATING A FLARE BEVEL WELD\n\n")
             self.R = 0.93 * 2 * t_HSS

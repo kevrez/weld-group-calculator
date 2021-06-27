@@ -30,6 +30,9 @@ class Application(Frame):
         self.draw_results()
         self.draw_preview()
 
+        # add trace functions to Tk inputs
+        self.add_traces()
+
         # draw CALCULATE button
         # self.run_button = Button(self, text="RECALCULATE", command=self.recalc_full, pady=5, padx=10)
         # self.run_button.grid(row=3, column=2, pady=(5, 0), padx=(15, 10), sticky='nesw')
@@ -42,7 +45,6 @@ class Application(Frame):
         # enable resizing to follow window size
         for i in range(3):
             self.rowconfigure(i, weight=1)
-
         for i in range(2):
             self.columnconfigure(i, weight=2)
         for i in range(2,4):
@@ -95,17 +97,14 @@ class Application(Frame):
         # set up variable for weld type
         self.weldtype = StringVar(self)
         self.weldtype.set("f")  # default value
-        self.weldtype.trace_add('write', self.recalc_full)
 
         # set up variable for hss thickness
         self.selected_hss_thickness = StringVar(self)
         self.selected_hss_thickness.set(self.hss_thickness_options[2])  # default value
-        self.selected_hss_thickness.trace_add('write', self.recalc_full)
 
         # fillet weld size variable
         self.selected_throat = StringVar(self)
         self.selected_throat.set(self.fillet_options[1])  # default value
-        self.selected_throat.trace_add('write', self.recalc_full)
 
         # set up master variable for selected weld strength
         self.text_weld_strength = StringVar(self)
@@ -187,7 +186,6 @@ class Application(Frame):
         # variable for selected weld group
         self.selected_weld_group = StringVar(self)
         self.selected_weld_group.set(self.weld_group_options[self.weld_group_options.index("=")])  # default value
-        self.selected_weld_group.trace_add('write', self.recalc_full)
 
         ### widgets ###
 
@@ -204,19 +202,12 @@ class Application(Frame):
         self.label_group = Label(self.f_weld_group, text='Group:')
         self.label_group.grid(row=0, column=0, padx=(self.PADX_WELD_GROUP), pady=self.PADY_WELD_GROUP, sticky='w')
 
-        # # weld group selection text
-        # self.label_selected_group = Label(self.f_weld_group, text="Selected\nGroup: ")
-        # self.label_selected_group.grid(row=1, column=0, columnspan=2, padx=self.PADX_WELD_GROUP, sticky='w')
-        # self.label_weld_group = Label(self.f_weld_group, textvariable=self.selected_weld_group, font='helvetica 32 bold')
-        # self.label_weld_group.grid(row=1, column=2, sticky='new')
-
         # b and d text variables for property entry boxes
         self.var_b = StringVar(self)
         self.var_b.set("0")
         self.var_d = StringVar(self)
         self.var_d.set("0")
-        self.var_b.trace_add('write', self.recalc_full)
-        self.var_d.trace_add('write', self.recalc_full)
+
 
         # b label
         self.label_b = Label(self.f_weld_group, text="b:")
@@ -260,8 +251,6 @@ class Application(Frame):
 
         self.units = StringVar(self)
         self.units.set('in') # default value
-
-        self.units.trace_add('write', self.recalc_full)
 
         self.radio_units = Radiobutton(self.f_units, text="kip-in", value="in", variable=self.units)
         self.radio_units.grid(row=0, column=0, padx=(10, 0), pady=(5, 5), sticky='nsew')
@@ -317,13 +306,6 @@ class Application(Frame):
         self.var_Au.set("0")
         self.var_Tu.set("0")
 
-        # add traces for property entry boxes
-        self.var_Mux.trace_add('write', self.recalc_full)
-        self.var_Muy.trace_add('write', self.recalc_full)
-        self.var_Vux.trace_add('write', self.recalc_full)
-        self.var_Vuy.trace_add('write', self.recalc_full)
-        self.var_Au.trace_add('write', self.recalc_full)
-        self.var_Tu.trace_add('write', self.recalc_full)
 
         # property entry boxes
         self.ENTRY_WIDTH = 7
@@ -529,198 +511,23 @@ class Application(Frame):
         self.tkwidget.grid(sticky='nsew')
 
 
-    def fillet_strength(self, throat: float) -> float:
-        """
-        Calculate the strength of a weld with an optional length parameter.
+    def add_traces(self):
+        self.weldtype.trace_add('write', self.recalc_results)
+        self.selected_hss_thickness.trace_add('write', self.recalc_results)
+        self.selected_throat.trace_add('write', self.recalc_results)
+        self.selected_weld_group.trace_add('write', self.recalc_full)
 
-        :param throat: Fillet weld throat in sixteenths of an inch.
-            Ex. Input `3` for a 3/16" fillet weld.
+        self.var_b.trace_add('write', self.recalc_full)
+        self.var_d.trace_add('write', self.recalc_full)
 
-        :return: Strength of weld in kips/in
-        """
-        strength = 1.392 * throat
-        # save for future development
-        # if consider_angle:
-        #     angle *= 3.1415926535 / 180 # convert angle from deg to radians
-        #     strength *= (1 + 0.5 * (math.sin(angle) ** 1.5))
-        return strength
+        self.units.trace_add('write', self.recalc_results)
 
-
-    def flare_bevel_eff_throat_from_HSS_t(self, t: float) -> float:
-        """
-        Return the effective throat of a flare bevel weld between a flat
-            and a radiused surface. Assumes filled flush to face of HSS.
-
-            Note: t can be inputted in inches or sixteenths of an inch,
-            the output will be in the same unit.
-        :param radius: Outer radius of welded element
-        :return: Effective throat
-        """
-        radius = 0.93 * 2 * t
-        return 5 / 16 * radius
-
-
-    def flare_v_eff_throat(self, radius: float) -> float:
-        """
-        Return the effective throat of a flare-V weld between two radiused
-            surfaces. Assumes filled flush to face of HSS.
-        :param radius: Outer radius of welded element. Select smallest
-            radius if working with HSS of different thickness.
-        :return: Effective throat
-        """
-        return 0.61 * radius
-
-
-    def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0, weld_strength: float = 0) -> None:
-        """
-        Calculate the 'section' properties of the inputted weld group based
-        on its dimensions and weld strength. Assign the section properties
-        to the global variables.
-
-        :param group:
-        :param b: width of group in x-direction (horizontal)
-        :param d: height of group in y-direction (vertical)
-        """
-
-        # draw_ui variables since all assignments are within 'if' clauses
-        # Python thinks the variables may not be assigned when linting
-        length = 0
-        Sx = 0
-        Sy = 0
-        J = 0
-        PM = 0
-        c = 0
-
-        # round small group dimensions to zero to discourage tiny welds
-        if (b < 1.0) and (d < 1.0):
-            Sx = 0
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        # calculate different properties based on weld group
-        elif group == '|':
-            length = d
-            Sx = d ** 2 / 6
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        elif group == '-':
-            length = b
-            Sx = b ** 2 / 6
-            Sy = 0
-            J = 0
-            PM = 0
-            c = 0
-
-        elif group == '||':
-            length = b + d
-            Sx = d ** 2 / 3
-            Sy = b * d
-            J = d / 6 * (3 * b ** 2 + d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        elif group == '=':
-            length = 2 * b
-            Sx = b * d
-            Sy = b ** 2 / 3
-            J = b / 6 * (b ** 2 + 3 * d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        elif group == '▯':
-            length = 2 * b + 2 * d
-            Sx = d / 3 * (3 * b + d)
-            Sy = b / 3 * (b + 3 * d)
-            J = (b + d) ** 3 / 6
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        # CHECK ALL THE FORMULAS BELOW THIS
-
-        elif group == '⨅':
-            length = b + 2 * d
-            # check, there are multiple Sx values shown
-            Sx = d / 3 * (2 * b + d)
-            Sy = b / 6 * (b + 6 * d)
-            J = d**2 / 3 * ((2 * b + d)/(b + 2 * d)) + \
-                b**2 / 12 * (b + 6 * d)  # check
-            Nx = d**2 / (b + 2 * d)
-            c = (Nx**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╥':
-            length = b + 2 * d
-            Sx = d / 3 * (2 * b + d)
-            Sy = b**2 / 6
-            J = d**3 / 3 * (2 * b + d)/(b + 2 * d) + b**3 / 12  # check
-            Ct = d**2 / (b + 2 * d)  # check
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╦':
-            length = 2 * (b + d)
-            Sx = d / 3 * (4 * b + d)
-            Sy = b / 3
-            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**2 / 6  # check
-            Ct = d**2 / (2 * (b + d))
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        # possible future addition
-        # elif group == "Ⅱ":
-        #     length = 2 * (b + d)
-        #     Sx = d / 3 * (3 * b + d)
-        #     Sy = b**2 / 3
-        #     J = d**2 / 6 * (3 * b + d) + b**2 / 6
-        #     c = (b**2 + d**2)**0.5 / 2
-        #     PM = J / c
-
-        elif group == "⌶":
-            length = 2 * (2 * b + d)
-            Sx = d / 3 * (6 * b + d)
-            Sy = 2 / 3 * b**2
-            J = d**2 / 6 * (6 * b + d) + b**3 / 3
-            c = (b**2 + d**2)**0.5 / 2
-            PM = J / c
-
-        # assign properties
-        phiMnx = weld_strength * Sx
-        phiMny = weld_strength * Sy
-        phiVnx = weld_strength * length
-        phiVny = weld_strength * length
-        phiTn = weld_strength * PM
-        phiAn = weld_strength * length
-
-        return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
-
-
-    def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
-                      phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
-
-        print(f"weld group is {wg}")
-        print(f"weld type is {weldtype.get()}")
-        print(f"throat is {throat}")
-        print(f"weld strength is {weld_strength}")
-        print(f"phiMnx = {phiMnx:.1f}")
-        print(f"phiMny = {phiMny:.1f}")
-        print(f"phiVnx = {phiVnx:.1f}")
-        print(f"phiVny = {phiVny:.1f}")
-        print(f"phiAn = {phiAn:.1f}")
-        print(f"phiTn = {phiTn:.1f}")
-        print(f"Mux = {Mux}")
-        print(f"Muy = {Muy}")
-        print(f"Vux = {Vux}")
-        print(f"Vuy = {Vuy}")
-        print(f"Au = {Au}")
-        print(f"Tu = {Tu}")
-        print(f"isFlareBevel is {isFlareBevel}")
-        print(f"HSS thickness is {hss_thickness}")
-        print()
+        self.var_Mux.trace_add('write', self.recalc_results)
+        self.var_Muy.trace_add('write', self.recalc_results)
+        self.var_Vux.trace_add('write', self.recalc_results)
+        self.var_Vuy.trace_add('write', self.recalc_results)
+        self.var_Au.trace_add('write', self.recalc_results)
+        self.var_Tu.trace_add('write', self.recalc_results)
 
 
     def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
@@ -883,7 +690,6 @@ class Application(Frame):
     def set_results_NA(self):
         self.var_total_util.set("N/A")
         self.label_total_utilization.config(font="helvetica 9 bold", fg="red")
-        
         self.var_phiMnx_util.set(f"N/A")
         self.var_phiMny_util.set(f"N/A")
         self.var_phiVnx_util.set(f"N/A")
@@ -1090,3 +896,26 @@ class Application(Frame):
                        canvas=self.canvas)
         self.recalc_results(works=works)
 
+
+    def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
+                      phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
+
+        print(f"weld group is {wg}")
+        print(f"weld type is {weldtype.get()}")
+        print(f"throat is {throat}")
+        print(f"weld strength is {weld_strength}")
+        print(f"phiMnx = {phiMnx:.1f}")
+        print(f"phiMny = {phiMny:.1f}")
+        print(f"phiVnx = {phiVnx:.1f}")
+        print(f"phiVny = {phiVny:.1f}")
+        print(f"phiAn = {phiAn:.1f}")
+        print(f"phiTn = {phiTn:.1f}")
+        print(f"Mux = {Mux}")
+        print(f"Muy = {Muy}")
+        print(f"Vux = {Vux}")
+        print(f"Vuy = {Vuy}")
+        print(f"Au = {Au}")
+        print(f"Tu = {Tu}")
+        print(f"isFlareBevel is {isFlareBevel}")
+        print(f"HSS thickness is {hss_thickness}")
+        print()
