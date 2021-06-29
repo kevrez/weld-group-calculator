@@ -49,7 +49,7 @@ class WeldGroup:
         :param d: height of group in y-direction (vertical)
         """
 
-        # round small group dimensions to zero
+        # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0): # checked
             length = 0
             Sx = 0
@@ -100,8 +100,12 @@ class WeldGroup:
             PM = J / c                               
 
         elif group == '⨅':                           # all checked - question
-            length = b + 2 * d                       
-            Sx = d / 3 * (2 * b + d)                 # this or Sxb?
+            length = b + 2 * d   
+
+            Sxt = d / 3 * (2 * b + d)
+            Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
+            Sx = (Sxt + Sxb) / 2
+
             Sy = b / 6 * (b + 6 * d)                 
             J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**2 / 12 * (b + 6 * d)
             Nx = d**2 / (b + 2 * d)                  
@@ -110,7 +114,11 @@ class WeldGroup:
 
         elif group == '╥':                           # all checked - question
             length = b + 2 * d                       
-            Sx = d / 3 * (2 * b + d)                 # this or Sxb? 
+            
+            Sxt = d / 3 * (2 * b + d)
+            Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
+            Sx = (Sxt + Sxb) / 2
+             
             Sy = b**2 / 6                            
             J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**3 / 12  
             Ct = d**2 / (b + 2 * d)                  
@@ -118,12 +126,16 @@ class WeldGroup:
             PM = J / c
 
         elif group == '╦':                           # all checked - question
-            length = 2 * (b + d) # checked
-            Sx = d / 3 * (4 * b + d) # this or Sxb?
-            Sy = b / 3 # checked
-            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**3 / 6  # checked
-            Ct = d**2 / (2 * (b + d)) # checked
-            c = (Ct**2 + (b / 2)**2)**0.5  # checked
+            length = 2 * (b + d)
+
+            Sxt = d / 3 * (4 * b + d)
+            Sxb = (4 * b * d**2 + d**3) / (6 * b + 3 * d)
+            Sx = (Sxt + Sxb) / 2
+
+            Sy = b / 3
+            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**3 / 6
+            Ct = d**2 / (2 * (b + d))
+            c = (Ct**2 + (b / 2)**2)**0.5
             PM = J / c
 
         elif group == "⌶":                           # all checked
@@ -238,3 +250,19 @@ class WeldGroup:
             total_ratio = util_phiMnx + util_phiMny + \
                 util_phiVnx + util_phiVny + util_phiAn + util_phiTn
             return util_phiMnx, util_phiMny, util_phiVnx, util_phiVny, util_phiAn, util_phiTn, total_ratio
+
+
+if __name__ == '__main__':
+    b = 8
+    d = 15
+    w = WeldGroup(t=3, group='⨅', b=b, d=d)
+
+    phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = w.properties()
+    print()
+    print(f'phiMnx = {phiMnx:.2f}')
+    print(f'phiMny = {phiMny:.2f}')
+    print(f'phiVnx = {phiVnx:.2f}')
+    print(f'phiVny = {phiVny:.2f}')
+    print(f'phiAn = {phiAn:.2f}')
+    print(f'phiTn = {phiTn:.2f}')
+    print()
