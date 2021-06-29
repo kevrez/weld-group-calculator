@@ -9,6 +9,7 @@ from weldapp import Application
 
 VERSION = '0.9 Beta  -  DO NOT USE FOR DESIGN'
 
+
 def savedata():
     global filename
     global app
@@ -25,7 +26,7 @@ def savedata():
         Tu = abs(float(app.entry_Tu.get()))
         units = app.units.get()
 
-        # assign variables for saving
+        # assign variables that get saved
         vars = (app.weldtype.get(), app.selected_throat.get(), app.selected_hss_thickness.get(
         ), app.selected_weld_group.get(), b, d, Mux, Muy, Vux, Vuy, Au, Tu, units)
 
@@ -38,7 +39,8 @@ def savedata():
 
 def saveasdata():
     global filename
-    filename = asksaveasfilename(title='Choose Filename', defaultextension='.txt', filetypes=[('Text Files', '*.txt')])
+    filename = asksaveasfilename(
+        title='Choose Filename', defaultextension='.txt', filetypes=[('Text Files', '*.txt')])
     if not filename:
         return
     # print("saving as -> " + filename)
@@ -58,7 +60,8 @@ def loaddata():
 
     if filename:
         with open(filename, "rb") as file:
-            var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units = pickle.load(file)
+            var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units = pickle.load(
+                file)
 
             app.weldtype.set(var_weldtype)
             app.selected_throat.set(var_selected_throat)
@@ -101,7 +104,6 @@ def resetter(to_be_destroyed):
     to_be_destroyed.destroy()
     global app
     app = Application(root, VERSION)
-    
 
 
 if __name__ == '__main__':
@@ -133,7 +135,6 @@ if __name__ == '__main__':
     # set up edit menu
 
     # add edit menu
-
 
     root.config(menu=menubar)
     root.protocol("WM_DELETE_WINDOW", root.quit)

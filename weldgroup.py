@@ -50,7 +50,7 @@ class WeldGroup:
         """
 
         # round small group dimensions to zero in case of typos
-        if (b < 1.0) and (d < 1.0): # checked
+        if (b < 1.0) and (d < 1.0):  # checked
             length = 0
             Sx = 0
             Sy = 0
@@ -76,53 +76,53 @@ class WeldGroup:
             c = 0
 
         elif group == '||':                          # all checked
-            length = 2 * d                           
-            Sx = (d**2) / 3                          
-            Sy = b * d                               
-            J = d / 6 * (3 * b**2 + d**2)            
-            c = (b**2 + d**2)**0.5 / 2               
-            PM = J / c                               
+            length = 2 * d
+            Sx = (d**2) / 3
+            Sy = b * d
+            J = d / 6 * (3 * b**2 + d**2)
+            c = (b**2 + d**2)**0.5 / 2
+            PM = J / c
 
         elif group == '=':                           # all checked
-            length = 2 * b                           
-            Sx = b * d                               
-            Sy = (b**2) / 3                          
-            J = b / 6 * (b**2 + 3 * d**2)            
-            c = (b ** 2 + d ** 2) ** 0.5 / 2         
-            PM = J / c                               
+            length = 2 * b
+            Sx = b * d
+            Sy = (b**2) / 3
+            J = b / 6 * (b**2 + 3 * d**2)
+            c = (b ** 2 + d ** 2) ** 0.5 / 2
+            PM = J / c
 
         elif group == '▯':                           # all checked
-            length = 2 * b + 2 * d                   
-            Sx = d / 3 * (3 * b + d)                 
-            Sy = b / 3 * (3 * d + b)                 
-            J = (b + d)**3 / 6                       
-            c = (b**2 + d**2)**0.5 / 2               
-            PM = J / c                               
+            length = 2 * b + 2 * d
+            Sx = d / 3 * (3 * b + d)
+            Sy = b / 3 * (3 * d + b)
+            J = (b + d)**3 / 6
+            c = (b**2 + d**2)**0.5 / 2
+            PM = J / c
 
         elif group == '⨅':                           # all checked - question
-            length = b + 2 * d   
+            length = b + 2 * d
 
             Sxt = d / 3 * (2 * b + d)
             Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
             Sx = (Sxt + Sxb) / 2
 
-            Sy = b / 6 * (b + 6 * d)                 
+            Sy = b / 6 * (b + 6 * d)
             J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**2 / 12 * (b + 6 * d)
-            Nx = d**2 / (b + 2 * d)                  
-            c = (Nx**2 + (b / 2)**2)**0.5            
-            PM = J / c                               
+            Nx = d**2 / (b + 2 * d)
+            c = (Nx**2 + (b / 2)**2)**0.5
+            PM = J / c
 
         elif group == '╥':                           # all checked - question
-            length = b + 2 * d                       
-            
+            length = b + 2 * d
+
             Sxt = d / 3 * (2 * b + d)
             Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
             Sx = (Sxt + Sxb) / 2
-             
-            Sy = b**2 / 6                            
-            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**3 / 12  
-            Ct = d**2 / (b + 2 * d)                  
-            c = (Ct**2 + (b / 2)**2)**0.5            
+
+            Sy = b**2 / 6
+            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**3 / 12
+            Ct = d**2 / (b + 2 * d)
+            c = (Ct**2 + (b / 2)**2)**0.5
             PM = J / c
 
         elif group == '╦':                           # all checked - question
@@ -164,13 +164,11 @@ class WeldGroup:
 
         return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
 
-
     def properties(self):
         # updates section properties and returns them. Useful in case of changes to attributes
         self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
             self.group, self.b, self.d, self.weld_strength)
         return self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn
-
 
     def check(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = self.properties()
