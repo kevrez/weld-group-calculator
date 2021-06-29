@@ -50,7 +50,7 @@ class WeldGroup:
         """
 
         # round small group dimensions to zero
-        if (b < 1.0) and (d < 1.0):
+        if (b < 1.0) and (d < 1.0): # checked
             length = 0
             Sx = 0
             Sy = 0
@@ -59,78 +59,74 @@ class WeldGroup:
             c = 0
 
         # calculate different properties based on weld group
-        elif group == '|':
+        elif group == '|':                           # all checked
             length = d
-            Sx = d ** 2 / 6
+            Sx = (d**2) / 6
             Sy = 0
             J = 0
             PM = 0
             c = 0
 
-        elif group == '-':
+        elif group == '-':                           # all checked
             length = b
-            Sx = b ** 2 / 6
+            Sx = (b**2) / 6
             Sy = 0
             J = 0
             PM = 0
             c = 0
 
-        elif group == '||':
-            length = b + d
-            Sx = d ** 2 / 3
-            Sy = b * d
-            J = d / 6 * (3 * b ** 2 + d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
+        elif group == '||':                          # all checked
+            length = 2 * d                           
+            Sx = (d**2) / 3                          
+            Sy = b * d                               
+            J = d / 6 * (3 * b**2 + d**2)            
+            c = (b**2 + d**2)**0.5 / 2               
+            PM = J / c                               
+
+        elif group == '=':                           # all checked
+            length = 2 * b                           
+            Sx = b * d                               
+            Sy = (b**2) / 3                          
+            J = b / 6 * (b**2 + 3 * d**2)            
+            c = (b ** 2 + d ** 2) ** 0.5 / 2         
+            PM = J / c                               
+
+        elif group == '▯':                           # all checked
+            length = 2 * b + 2 * d                   
+            Sx = d / 3 * (3 * b + d)                 
+            Sy = b / 3 * (3 * d + b)                 
+            J = (b + d)**3 / 6                       
+            c = (b**2 + d**2)**0.5 / 2               
+            PM = J / c                               
+
+        elif group == '⨅':                           # all checked - question
+            length = b + 2 * d                       
+            Sx = d / 3 * (2 * b + d)                 # this or Sxb?
+            Sy = b / 6 * (b + 6 * d)                 
+            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**2 / 12 * (b + 6 * d)
+            Nx = d**2 / (b + 2 * d)                  
+            c = (Nx**2 + (b / 2)**2)**0.5            
+            PM = J / c                               
+
+        elif group == '╥':                           # all checked - question
+            length = b + 2 * d                       
+            Sx = d / 3 * (2 * b + d)                 # this or Sxb? 
+            Sy = b**2 / 6                            
+            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**3 / 12  
+            Ct = d**2 / (b + 2 * d)                  
+            c = (Ct**2 + (b / 2)**2)**0.5            
             PM = J / c
 
-        elif group == '=':
-            length = 2 * b
-            Sx = b * d
-            Sy = b ** 2 / 3
-            J = b / 6 * (b ** 2 + 3 * d ** 2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
+        elif group == '╦':                           # all checked - question
+            length = 2 * (b + d) # checked
+            Sx = d / 3 * (4 * b + d) # this or Sxb?
+            Sy = b / 3 # checked
+            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**3 / 6  # checked
+            Ct = d**2 / (2 * (b + d)) # checked
+            c = (Ct**2 + (b / 2)**2)**0.5  # checked
             PM = J / c
 
-        elif group == '▯':
-            length = 2 * b + 2 * d
-            Sx = d / 3 * (3 * b + d)
-            Sy = b / 3 * (b + 3 * d)
-            J = (b + d) ** 3 / 6
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
-            PM = J / c
-
-        # CHECK ALL THE FORMULAS BELOW THIS
-
-        elif group == '⨅':
-            length = b + 2 * d
-            # check, there are multiple Sx values shown
-            Sx = d / 3 * (2 * b + d)
-            Sy = b / 6 * (b + 6 * d)
-            J = d**2 / 3 * ((2 * b + d)/(b + 2 * d)) + \
-                b**2 / 12 * (b + 6 * d)  # check
-            Nx = d**2 / (b + 2 * d)
-            c = (Nx**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╥':
-            length = b + 2 * d
-            Sx = d / 3 * (2 * b + d)
-            Sy = b**2 / 6
-            J = d**3 / 3 * (2 * b + d)/(b + 2 * d) + b**3 / 12  # check
-            Ct = d**2 / (b + 2 * d)  # check
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == '╦':
-            length = 2 * (b + d)
-            Sx = d / 3 * (4 * b + d)
-            Sy = b / 3
-            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**2 / 6  # check
-            Ct = d**2 / (2 * (b + d))
-            c = (Ct**2 + (b / 2)**2)**0.5  # check
-            PM = J / c
-
-        elif group == "⌶":
+        elif group == "⌶":                           # all checked
             length = 2 * (2 * b + d)
             Sx = d / 3 * (6 * b + d)
             Sy = 2 / 3 * b**2
