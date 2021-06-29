@@ -1,4 +1,5 @@
-from tkinter import *
+# from tkinter import *
+from tkinter import (Tk, END, Menu)
 from tkinter.filedialog import asksaveasfilename, askopenfilenames
 import pickle
 from weldapp import Application
@@ -89,7 +90,7 @@ def loaddata():
             app.entry_Tu.delete(0, END)
             app.entry_Tu.insert(0, Tu)
 
-            app.runrun()
+            app.recalc_full()
 
     else:
         print("File not read")

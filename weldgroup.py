@@ -159,8 +159,8 @@ class WeldGroup:
         phiMny = weld_strength * Sy
         phiVnx = weld_strength * length
         phiVny = weld_strength * length
-        phiTn = weld_strength * PM
         phiAn = weld_strength * length
+        phiTn = weld_strength * PM
 
         return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
 

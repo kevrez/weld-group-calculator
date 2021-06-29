@@ -16,7 +16,7 @@ section_doc = \
                 In this program, the load angle effect described by AISC in section XXXX is not considered. Since AISC allows an increase of up to 50% for loading perpendicular to the line of the weld, the section properties calculated here are accurate to conservative by up to 33%."""
 
 utilization_doc = \
-                """Utilization values are calculated slightly differently than the method that Blodgett suggests in WELDED CONNECTIONS. His paper describes the following process:
+                """Utilization values are calculated differently than the method that Blodgett suggests in WELDED CONNECTIONS. His paper describes the following process:
                     - Find the position on the welded connection where the combination of forces will be maximum
                     - Find the value of each of the forces on the welded connection at this point. Divide the force by the section modulus to determine a minimum required weld strength
                     - Combine (vectorially) all forces on the weld at this point
@@ -33,5 +33,3 @@ utilization_doc = \
                 The non-vectorial combination of each individual utilization ratio results in a higher total utilization ratio than if the values were added vectorially using the square root of the sum of the squares. This is a conservative assumption by Uzun+Case and is intended to account for the potential unconservativeness of not studying the most critical point at each weld group. The resulting total ratio is accurate to conservative as a result, similarly to not considering the load angle effect as mentioned in the previous section.
                 
                 A second reason for the decision to calculate the strength and utilization of the weld group this way is ease of implementation. This method provides the advantage that the strength of the section and the resulting total utilization ratio can be calculated the same way each time, as opposed to determining the individual weld with the highest demand, which Blodgett's method requires."""
-
-                

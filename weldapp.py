@@ -1,4 +1,13 @@
-from tkinter import *
+# from tkinter import *
+from tkinter import (
+    Label,
+    StringVar,
+    Entry,
+    OptionMenu,
+    LabelFrame,
+    Radiobutton,
+    Frame,
+)
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from weldgroup import WeldGroup
