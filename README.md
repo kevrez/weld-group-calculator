@@ -11,7 +11,7 @@ or construction related to the use of this software.
 
 ## Documentation: 
 
-In this program, weld strength is calculated using formula XXX in AISC 360:
+In this program, weld strength is calculated using AISC Section J, assuming E70XX electrodes and SMAW welding:
 phiRn = 1.392 * t, where t is the weld throat in sixteenths of an inch. 
 The phi value included in phiRn is the only strength reduction factor considered in these equations.
 
