@@ -44,7 +44,7 @@ class WeldGroup:
         on its dimensions and weld strength. Assign the section properties
         to the global variables.
 
-        :param group: selected weld group 
+        :param group: selected weld group
         :param b: width of group in x-direction (horizontal)
         :param d: height of group in y-direction (vertical)
         """
@@ -79,7 +79,7 @@ class WeldGroup:
             length = 2 * d
             Sx = (d**2) / 3
             Sy = b * d
-            J = d / 6 * (3 * b**2 + d**2)
+            J = d/6 * (3*b**2 + d**2)
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
 
@@ -87,62 +87,62 @@ class WeldGroup:
             length = 2 * b
             Sx = b * d
             Sy = (b**2) / 3
-            J = b / 6 * (b**2 + 3 * d**2)
-            c = (b ** 2 + d ** 2) ** 0.5 / 2
+            J = b/6 * (b**2 + 3*d**2)
+            c = (b**2 + d**2) ** 0.5 / 2
             PM = J / c
 
         elif group == '▯':                           # all checked
-            length = 2 * b + 2 * d
-            Sx = d / 3 * (3 * b + d)
-            Sy = b / 3 * (3 * d + b)
-            J = (b + d)**3 / 6
+            length = 2*b + 2*d
+            Sx = d/3 * (3*b + d)
+            Sy = b/3 * (3*d + b)
+            J = (b+d)**3 / 6
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
 
         elif group == '⨅':                           # all checked - question
-            length = b + 2 * d
+            length = b + 2*d
 
-            Sxt = d / 3 * (2 * b + d)
-            Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
+            Sxt = d/3 * (2*b + d)
+            Sxb = (d**2 * (2*b + d)) / (3 * (b+d))
             Sx = (Sxt + Sxb) / 2
 
-            Sy = b / 6 * (b + 6 * d)
-            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**2 / 12 * (b + 6 * d)
-            Nx = d**2 / (b + 2 * d)
-            c = (Nx**2 + (b / 2)**2)**0.5
+            Sy = b/6 * (b + 6*d)
+            J = d**3 / 3 * ((2*b + d)/(b + 2*d)) + b**2 / 12 * (b+6 * d)
+            Nx = d**2 / (b + 2*d)
+            c = (Nx**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == '╥':                           # all checked - question
-            length = b + 2 * d
+            length = b + 2*d
 
-            Sxt = d / 3 * (2 * b + d)
-            Sxb = (d**2 * (2 * b + d)) / (3 * (b + d))
+            Sxt = d/3 * (2*b + d)
+            Sxb = (d**2 * (2*b + d)) / (3 * (b+d))
             Sx = (Sxt + Sxb) / 2
 
             Sy = b**2 / 6
-            J = d**3 / 3 * ((2 * b + d)/(b + 2 * d)) + b**3 / 12
-            Ct = d**2 / (b + 2 * d)
-            c = (Ct**2 + (b / 2)**2)**0.5
+            J = d**3 / 3 * ((2*b + d)/(b + 2*d)) + b**3 / 12
+            Ct = d**2 / (b + 2*d)
+            c = (Ct**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == '╦':                           # all checked - question
-            length = 2 * (b + d)
+            length = 2 * (b+d)
 
-            Sxt = d / 3 * (4 * b + d)
-            Sxb = (4 * b * d**2 + d**3) / (6 * b + 3 * d)
+            Sxt = d/3 * (4*b + d)
+            Sxb = (4*b * d**2 + d**3) / (6*b + 3*d)
             Sx = (Sxt + Sxb) / 2
 
             Sy = b / 3
-            J = d**3 / 6 * ((4 * b + d)/(b + d)) + b**3 / 6
-            Ct = d**2 / (2 * (b + d))
-            c = (Ct**2 + (b / 2)**2)**0.5
+            J = d**3 / 6 * ((4*b + d)/(b+d)) + b**3 / 6
+            Ct = d**2 / (2 * (b+d))
+            c = (Ct**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == "⌶":                           # all checked
-            length = 2 * (2 * b + d)
-            Sx = d / 3 * (6 * b + d)
-            Sy = 2 / 3 * b**2
-            J = d**2 / 6 * (6 * b + d) + b**3 / 3
+            length = 2 * (2*b + d)
+            Sx = d/3 * (6*b + d)
+            Sy = 2/3 * b**2
+            J = d**2 / 6 * (6*b + d) + b**3 / 3
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
 
