@@ -63,7 +63,7 @@ class Application(Frame):
             self.columnconfigure(i, weight=1)
 
         self.rowconfigure(1, weight=2)
-        self.rowconfigure(2, weight=2)
+        self.rowconfigure(2, weight=3)
 
 
     def draw_weldtype(self):
