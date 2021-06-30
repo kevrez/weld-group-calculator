@@ -1,6 +1,7 @@
 # weld-group-calculator
 Calculator for fillet and flare bevel welds in various arrangements by Kevin Reznicek.
 
+## Disclaimers
 This program is in an untested state and is NOT for use in construction. 
 The equations used in the program are still in need of review. Before using, it is your responsibility to read all of the documentation. The equations utilized in the program for each weld group are also enumerated.
 
@@ -8,7 +9,7 @@ None of the contributors will be liable for any element of design
 or construction related to the use of this software.
 
 
-DOCUMENTATION: 
+## Documentation: 
 
 In this program, weld strength is calculated using formula XXX in AISC 360:
 phiRn = 1.392 * t, where t is the weld throat in sixteenths of an inch. 
@@ -16,20 +17,21 @@ The phi value included in phiRn is the only strength reduction factor considered
 
 Individual section properties are calculated by treating welds as lines, and using formulas provided by Omer W. Blodgett in DESIGN OF WELDMENTS (1976), and WELDED CONNECTIONS by Blodgett et al (1999):
 
-Moment:
+### Moment:
 Moment capacity is calculated by using an equivalent section modulus Sx or Sy from the weld geometry from the appropriate formula. It is then multiplied by the linear strength of the selected weld to obtain a moment capacity in kip-inches. It is then converted to kip-ft as necessary, separate from the calculation.
 
 Weld groups with asymmetrical shapes have multiple values for Sx provided by Blodgett related to top and bottom. This program uses the mean of the two values (Sxt and Sxb) as an effective section modulus to determine the strength of the section.
 
-Shear & Axial Forces
+### Shear & Axial Forces
 Shear and axial capacities are calculated by multiplying the total linear length of weld by the weld strength. They will therefore always result in an equal value to each other.
 
-Torsion
+### Torsion
 Torsional strength is calculated by calculating the polar section modulus by dividing J, the torsional constant by c, the average distance to centroid. This modulus is multiplied by the linear weld strength to obtain a strength in kip-inches. It is then converted to kip-ft as necessary, separate from the calculation.
 
-Load Angle
+### Load Angle
 In this program, the load angle effect described by AISC in section XXXX is not considered. Since AISC allows an increase of up to 50% for loading perpendicular to the line of the weld, the section properties calculated here may be conservative by up to 33%, depending on the case.
 
+### Utilization & Interaction
 Utilization values are calculated differently than the method that Blodgett suggests in WELDED CONNECTIONS. His paper describes the following process:
 - Find the position on the welded connection where the combination of forces will be maximum
 - Find the value of each of the forces on the welded connection at this point. Divide the force by the section modulus to determine a minimum required weld strength
