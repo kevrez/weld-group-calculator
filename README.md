@@ -17,6 +17,9 @@ The phi value included in phiRn is the only strength reduction factor considered
 
 Individual section properties are calculated by treating welds as lines, and using formulas provided by Omer W. Blodgett in DESIGN OF WELDMENTS (1976), and WELDED CONNECTIONS by Blodgett et al (1999):
 
+### Load Angle
+In this program, the load angle effect described by AISC in section XXXX is not considered. Since AISC allows an increase of up to 50% for loading perpendicular to the line of the weld, the section properties calculated here may be conservative by up to 33%, depending on the case.
+
 ### Moment:
 Moment capacity is calculated by using an equivalent section modulus Sx or Sy from the weld geometry from the appropriate formula. It is then multiplied by the linear strength of the selected weld to obtain a moment capacity in kip-inches. It is then converted to kip-ft as necessary, separate from the calculation.
 
@@ -27,9 +30,6 @@ Shear and axial capacities are calculated by multiplying the total linear length
 
 ### Torsion
 Torsional strength is calculated by calculating the polar section modulus by dividing J, the torsional constant by c, the average distance to centroid. This modulus is multiplied by the linear weld strength to obtain a strength in kip-inches. It is then converted to kip-ft as necessary, separate from the calculation.
-
-### Load Angle
-In this program, the load angle effect described by AISC in section XXXX is not considered. Since AISC allows an increase of up to 50% for loading perpendicular to the line of the weld, the section properties calculated here may be conservative by up to 33%, depending on the case.
 
 ### Utilization & Interaction
 Utilization values are calculated differently than the method that Blodgett suggests in WELDED CONNECTIONS. His paper describes the following process:
