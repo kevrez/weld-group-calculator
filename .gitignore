@@ -1,0 +1,18 @@
+.DS_Store
+
+
+.nova/
+
+.vscode/
+
+__init__.py
+
+__pycache__/
+
+misc/
+
+resources/
+
+test saves/
+
+weld-group-calculator/
