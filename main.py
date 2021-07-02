@@ -25,10 +25,11 @@ def savedata():
         Au = abs(float(app.entry_Au.get()))
         Tu = abs(float(app.entry_Tu.get()))
         units = app.units.get()
+        considerAngle = app.considerAngle.get()
 
         # assign variables that get saved
         vars = (app.weldtype.get(), app.selected_throat.get(), app.selected_hss_thickness.get(
-        ), app.selected_weld_group.get(), b, d, Mux, Muy, Vux, Vuy, Au, Tu, units)
+        ), app.selected_weld_group.get(), b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle)
 
         with open(filename, "wb") as file:
             pickle.dump(vars, file)
@@ -60,7 +61,7 @@ def loaddata():
 
     if filename:
         with open(filename, "rb") as file:
-            var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units = pickle.load(
+            var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle = pickle.load(
                 file)
 
             app.weldtype.set(var_weldtype)
@@ -68,6 +69,7 @@ def loaddata():
             app.selected_hss_thickness.set(var_selected_hss_thickness)
             app.selected_weld_group.set(var_selected_weld_group)
             app.units.set(units)
+            app.considerAngle.set(considerAngle)
 
             app.entry_b.delete(0, END)
             app.entry_b.insert(0, b)
@@ -110,8 +112,8 @@ if __name__ == '__main__':
     ################################# DRAW GUI #################################
     # set up root window with title
     root = Tk()
-    root.geometry('900x450')
-    root.minsize(width=900, height=450)
+    root.geometry('900x465')
+    root.minsize(width=900, height=465)
     root.title("Weld Group Strength Calculator")
     root.resizable(width=True, height=True)
 

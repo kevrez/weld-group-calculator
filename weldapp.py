@@ -620,7 +620,7 @@ class Application(Frame):
 
     def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(
-            figsize=(3.8, 10))  # figsize=(4.6, 4.3)
+            figsize=(4, 10))  # figsize=(4.6, 4.6)
         self.fig1.set_tight_layout(True)
         self.ax1.axvline(color='black', linestyle=':')
         self.ax1.axhline(color='black', linestyle=':')
@@ -854,9 +854,9 @@ class Application(Frame):
             self.set_results_NA()
             return
 
-        # calculate section properties based on inputs
-        phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.calculate_properties(
-            group=wg, b=b, d=d, weld_strength=weld_group.weld_strength, considerAngle=considerAngle)
+        # get section properties from weld group
+        phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
+
 
         # get all loading inputs
         Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0

@@ -54,6 +54,7 @@ class WeldGroup:
 
         print(f'Good is {good}')
         print(f'Bad is {bad}')
+        print()
 
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
@@ -204,9 +205,7 @@ class WeldGroup:
         return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn
 
     def properties(self):
-        # updates section properties and returns them. Useful in case of changes to attributes
-        self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
-            self.group, self.b, self.d, self.weld_strength, self.considerAngle)
+        # returns current section properties
         return self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn
 
     def check_strength(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
