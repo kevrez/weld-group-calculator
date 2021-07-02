@@ -129,7 +129,7 @@ if __name__ == '__main__':
     filemenu.add_command(label="Save", command=savedata)
     filemenu.add_command(label="Save As...", command=saveasdata)
     filemenu.add_command(label="Open...", command=loaddata)
-    filemenu.add_command(label="Exit", command=exit)
+    # filemenu.add_command(label="Exit", command=exit)
 
     # add file menu
     menubar.add_cascade(label="File", menu=filemenu)

@@ -52,9 +52,9 @@ class WeldGroup:
         good = (1 + 0.5*considerAngle) # longitudinal loading
         bad = (1 - 0.15*considerAngle) # transverse loading
 
-        print(f'Good is {good}')
-        print(f'Bad is {bad}')
-        print()
+        # print(f'Good is {good}')
+        # print(f'Bad is {bad}')
+        # print()
 
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
