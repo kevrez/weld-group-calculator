@@ -7,6 +7,7 @@ from tkinter import (
     LabelFrame,
     Radiobutton,
     Frame,
+    BooleanVar,
 )
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
@@ -37,6 +38,7 @@ class Application(Frame):
         # draw labelframes and widgets
         self.draw_weldtype()
         self.draw_weldgroup()
+        self.draw_considerAngle()
         self.draw_units()
         self.draw_loads()
         self.draw_results()
@@ -55,7 +57,7 @@ class Application(Frame):
         # self.reset_plot_button.grid(row=3, column=3, pady=(5, 0), padx=(5, 25), sticky='nesw')
 
         # enable resizing to follow window size
-        for i in range(3):
+        for i in range(2):
             self.rowconfigure(i, weight=1)
         for i in range(2):
             self.columnconfigure(i, weight=2)
@@ -63,7 +65,8 @@ class Application(Frame):
             self.columnconfigure(i, weight=1)
 
         self.rowconfigure(1, weight=2)
-        self.rowconfigure(2, weight=3)
+        self.rowconfigure(2, weight=2)
+        self.rowconfigure(3, weight=3)
 
 
     def draw_weldtype(self):
@@ -172,7 +175,7 @@ class Application(Frame):
         self.label_weld_strength = Label(
             self.f_weld_type, text="Nominal\nWeld Strength:")
         self.label_weld_strength.grid(
-            row=5, column=0, sticky='ew', pady=(0, 10))
+            row=5, column=0, sticky='ew', pady=(0, 2))
 
         # weld klf label
         self.label_linear_strength = Label(
@@ -240,7 +243,7 @@ class Application(Frame):
 
         # b label
         self.label_b = Label(self.f_weld_group, text="b:")
-        self.label_b.grid(row=2, column=0, padx=(self.PADX_WELD_GROUP))
+        self.label_b.grid(row=2, column=0, padx=self.PADX_WELD_GROUP)
 
         # b entry box
         self.entry_b = Entry(self.f_weld_group, width=5,
@@ -253,16 +256,16 @@ class Application(Frame):
 
         # d label
         self.label_d = Label(self.f_weld_group, text="d:")
-        self.label_d.grid(row=3, column=0, padx=(self.PADX_WELD_GROUP))
+        self.label_d.grid(row=3, column=0, padx=self.PADX_WELD_GROUP, pady=(0,10))
 
         # d entry box
         self.entry_d = Entry(self.f_weld_group, width=5,
                              textvariable=self.var_d)
-        self.entry_d.grid(row=3, column=1)
+        self.entry_d.grid(row=3, column=1, pady=(0,10))
 
         # d units label
         self.label_d_units = Label(self.f_weld_group, text="in")
-        self.label_d_units.grid(row=3, column=2)
+        self.label_d_units.grid(row=3, column=2, pady=(0,10))
 
         for i in range(10):
             self.f_weld_group.rowconfigure(i, weight=1)
@@ -273,12 +276,12 @@ class Application(Frame):
 
     def draw_units(self):
 
-        ##### set up Weld Group LabelFrame, variables, widgets #####
+        ##### set up Units LabelFrame, variables, widgets #####
 
         ### LabelFrame ###
         self.f_units = LabelFrame(self, text="Units")  # height=230, width=230
-        self.f_units.grid(row=2, column=0, padx=(25, 5),
-                          pady=(10, 0), rowspan=3, sticky='nesw')
+        self.f_units.grid(row=3, column=0, padx=(25, 5),
+                          pady=(10, 0), sticky='nesw')
 
         self.units = StringVar(self)
         self.units.set('in')  # default value
@@ -298,6 +301,33 @@ class Application(Frame):
             self.f_units.columnconfigure(i, weight=1)
 
 
+    def draw_considerAngle(self):
+
+        ##### set up Consider Load Angle LabelFrame, variables, widgets #####
+
+        ### LabelFrame ###
+        self.f_considerAngle = LabelFrame(self, text="Consider Load Angle")  # height=230, width=230
+        self.f_considerAngle.grid(row=2, column=0, padx=(25, 5),
+                          pady=(10, 0), sticky='nesw')
+
+        self.considerAngle = BooleanVar(self)
+        self.considerAngle.set(False)  # default value
+
+        self.radio_considerAngle = Radiobutton(
+            self.f_considerAngle, text="Yes", value=True, variable=self.considerAngle)
+        self.radio_considerAngle.grid(row=0, column=0, padx=(
+            10, 0), pady=(5, 5), sticky='nsew')
+
+        self.radio_considerAngle = Radiobutton(
+            self.f_considerAngle, text="No", value=False, variable=self.considerAngle)
+        self.radio_considerAngle.grid(row=0, column=1, padx=(
+            0, 25), pady=(5, 5), sticky='nsew')
+
+        for i in range(2):
+            self.f_considerAngle.rowconfigure(i, weight=1)
+            self.f_considerAngle.columnconfigure(i, weight=1)
+
+
     def draw_loads(self):
 
         ##### set up Loads LabelFrame, widgets #####
@@ -305,12 +335,12 @@ class Application(Frame):
         ### LabelFrame ###
         self.f_loads = LabelFrame(self, text="Loads")  # height=230, width=230
         self.f_loads.grid(row=0, column=1, padx=(5, 5),
-                          pady=(10, 0), sticky='nesw')
+                          pady=(10, 0), sticky='nesw', rowspan=1)
 
         ### widgets ###
 
         self.PADX_LOADING = (30, 0)
-        self.PADY_LOADING = (3, 0)
+        self.PADY_LOADING = (0, 0)
 
         # property titles
         self.title_Mux = Label(self.f_loads, text="Mu-x:")
@@ -582,7 +612,7 @@ class Application(Frame):
             self.f_plot.columnconfigure(i, weight=1)
 
         self.f_plot.grid(row=0, column=2, padx=(5, 25), pady=(
-            10, 0), rowspan=3, columnspan=2, sticky='nse')
+            10, 0), rowspan=4, columnspan=2, sticky='nse')
 
         # draw plot
         self.draw_plot()
@@ -615,6 +645,7 @@ class Application(Frame):
         self.selected_hss_thickness.trace_add('write', self.recalc_results)
         self.selected_throat.trace_add('write', self.recalc_results)
         self.selected_weld_group.trace_add('write', self.recalc_full)
+        self.considerAngle.trace_add('write', self.recalc_results)
 
         self.var_b.trace_add('write', self.recalc_full)
         self.var_d.trace_add('write', self.recalc_full)
@@ -798,7 +829,6 @@ class Application(Frame):
 
 
     def recalc_results(self, works=True, *args):
-
         ##########  WELD TYPE  ##########
         # take in variables
         wg = self.selected_weld_group.get()
@@ -811,22 +841,22 @@ class Application(Frame):
             # print("Tried to get b or d but value was empty")
             pass
 
-        # set isFlareBevel
         isFlareBevel = self.weldtype.get() == "fb"
+        considerAngle = self.considerAngle.get()
 
         ##########  SECTION PROPERTIES & LOADS  ##########
 
         # create instance of weld group to pull section properties
         try:
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
-                                   isFlareBevel=isFlareBevel, t_HSS=hss_thickness)
+                isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
         except:
             self.set_results_NA()
             return
 
         # calculate section properties based on inputs
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.calculate_properties(
-            group=wg, b=b, d=d, weld_strength=weld_group.weld_strength)
+            group=wg, b=b, d=d, weld_strength=weld_group.weld_strength, considerAngle=considerAngle)
 
         # get all loading inputs
         Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0
@@ -972,6 +1002,7 @@ class Application(Frame):
         """
         Take in inputs from GUI, calculate outputs, draw outputs.
         """
+        # print('Full Recalc')
         works = True
         wg = self.selected_weld_group.get()
         try:

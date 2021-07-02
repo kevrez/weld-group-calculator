@@ -36,7 +36,7 @@ class WeldGroup:
         self.weld_strength = 1.392 * self.t
 
         self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
-            group, b, d, self.weld_strength)
+            group, b, d, self.weld_strength, self.considerAngle)
 
     def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0,
         weld_strength: float = 0, considerAngle:bool = False) -> None:
@@ -49,9 +49,11 @@ class WeldGroup:
         :param b: width of group in x-direction (horizontal)
         :param d: height of group in y-direction (vertical)
         """
-
         good = (1 + 0.5*considerAngle) # longitudinal loading
         bad = (1 - 0.15*considerAngle) # transverse loading
+
+        print(f'Good is {good}')
+        print(f'Bad is {bad}')
 
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
