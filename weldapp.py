@@ -170,7 +170,7 @@ class Application(Frame):
 
         # selected weld strength text boxes
         self.label_weld_strength = Label(
-            self.f_weld_type, text="Selected\nWeld Strength:")
+            self.f_weld_type, text="Nominal\nWeld Strength:")
         self.label_weld_strength.grid(
             row=5, column=0, sticky='ew', pady=(0, 10))
 

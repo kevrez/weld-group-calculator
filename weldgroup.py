@@ -16,16 +16,16 @@
 #                          10: 8.026,
 #                          }
 
-
 class WeldGroup:
     # class constructor
-    def __init__(self, t: int = 3, group: str = '=', b: float = 0, d: float = 0, isFlareBevel: bool = False, t_HSS: int = 4):
+    def __init__(self, t: int = 3, group: str = '=', b: float = 0, d: float = 0, isFlareBevel: bool = False, t_HSS: int = 4, considerAngle: bool = False):
         self.t = t
         self.group = group
         self.b = b
         self.d = d
         self.isFlareBevel = isFlareBevel
         self.t_HSS = t_HSS
+        self.considerAngle = considerAngle
 
         # if flare bevel selected, calculate effective throat of flare bevel from t_HSS
         if isFlareBevel:
@@ -38,7 +38,8 @@ class WeldGroup:
         self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
             group, b, d, self.weld_strength)
 
-    def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0, weld_strength: float = 0) -> None:
+    def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0,
+        weld_strength: float = 0, considerAngle:bool = False) -> None:
         """
         Calculate the 'section' properties of the inputted weld group based
         on its dimensions and weld strength. Assign the section properties
@@ -49,99 +50,135 @@ class WeldGroup:
         :param d: height of group in y-direction (vertical)
         """
 
+        good = (1 + 0.5*considerAngle) # longitudinal loading
+        bad = (1 - 0.15*considerAngle) # transverse loading
+
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
             length = 0
+
             Sx = 0
             Sy = 0
+
             J = 0
-            PM = 0
             c = 0
+            PM = 0
 
         # calculate different properties based on weld group
-        elif group == '|':                           # all checked
-            length = d
+        elif group == '|':
+            lenVx = d * good
+            lenVy = d * bad
+            lenA = d
+
             Sx = (d**2) / 6
             Sy = 0
-            J = 0
-            PM = 0
-            c = 0
 
-        elif group == '-':                           # all checked
-            length = b
+            J = 0
+            c = 0
+            PM = 0
+
+
+        elif group == '-':
+            lenVx = b  * bad
+            lenVy = b * good
+            lenA = b
+
             Sx = (b**2) / 6
             Sy = 0
-            J = 0
-            PM = 0
-            c = 0
 
-        elif group == '||':                          # all checked
-            length = 2 * d
+            J = 0
+            c = 0
+            PM = 0
+
+        elif group == '||':
+            lenVx = 2 * d * good
+            lenVy = 2 * d * bad
+            lenA = 2 * d
+
             Sx = (d**2) / 3
             Sy = b * d
+
             J = d/6 * (3*b**2 + d**2)
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
 
-        elif group == '=':                           # all checked
-            length = 2 * b
+        elif group == '=':
+            lenVx = 2 * b * bad
+            lenVy = 2 * b * good
+            lenA = 2 * b
+
             Sx = b * d
             Sy = (b**2) / 3
+
             J = b/6 * (b**2 + 3*d**2)
             c = (b**2 + d**2) ** 0.5 / 2
             PM = J / c
 
-        elif group == '▯':                           # all checked
-            length = 2*b + 2*d
+        elif group == '▯':
+            lenVx = 2*b * bad + 2*d * good
+            lenVy = 2*b * good + 2*d * bad
+            lenA = 2*b + 2*d
+
             Sx = d/3 * (3*b + d)
             Sy = b/3 * (3*d + b)
+
             J = (b+d)**3 / 6
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
 
-        elif group == '⨅':                           # all checked - question
-            length = b + 2*d
+        elif group == '⨅':
+            lenVx = b * bad + 2*d * good
+            lenVy = b * good + 2*d * bad
+            lenA = b + 2*d
 
             Sxt = d/3 * (2*b + d)
             Sxb = (d**2 * (2*b + d)) / (3 * (b+d))
-            Sx = (Sxt + Sxb) / 2
-
+            Sx = min(Sxt, Sxb)
             Sy = b/6 * (b + 6*d)
+
             J = d**3 / 3 * ((2*b + d)/(b + 2*d)) + b**2 / 12 * (b+6 * d)
             Nx = d**2 / (b + 2*d)
             c = (Nx**2 + (b/2)**2)**0.5
             PM = J / c
 
-        elif group == '╥':                           # all checked - question
-            length = b + 2*d
+        elif group == '╥':
+            lenVx = b * bad + 2*d * good
+            lenVy = b * good + 2*d * bad
+            lenA = b + 2*d
 
             Sxt = d/3 * (2*b + d)
             Sxb = (d**2 * (2*b + d)) / (3 * (b+d))
-            Sx = (Sxt + Sxb) / 2
-
+            Sx = min(Sxt, Sxb)
             Sy = b**2 / 6
+
             J = d**3 / 3 * ((2*b + d)/(b + 2*d)) + b**3 / 12
             Ct = d**2 / (b + 2*d)
             c = (Ct**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == '╦':                           # all checked - question
-            length = 2 * (b+d)
+            lenVx = 2 * (b * bad + d * good)
+            lenVy = 2 * (b * good + d * bad)
+            lenA = 2 * (b + d)
 
             Sxt = d/3 * (4*b + d)
             Sxb = (4*b * d**2 + d**3) / (6*b + 3*d)
-            Sx = (Sxt + Sxb) / 2
-
+            Sx = min(Sxt, Sxb)
             Sy = b / 3
+
             J = d**3 / 6 * ((4*b + d)/(b+d)) + b**3 / 6
             Ct = d**2 / (2 * (b+d))
             c = (Ct**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == "⌶":                           # all checked
-            length = 2 * (2*b + d)
+            lenVx = 2 * (2*b * bad + d * good)
+            lenVy = 2 * (2*b * good + d * bad)
+            lenA = 2 * (2*b + d)
+
             Sx = d/3 * (6*b + d)
             Sy = 2/3 * b**2
+
             J = d**2 / 6 * (6*b + d) + b**3 / 3
             c = (b**2 + d**2)**0.5 / 2
             PM = J / c
@@ -155,22 +192,22 @@ class WeldGroup:
             c = 0
 
         # assign properties
-        phiMnx = weld_strength * Sx
-        phiMny = weld_strength * Sy
-        phiVnx = weld_strength * length
-        phiVny = weld_strength * length
-        phiAn = weld_strength * length
-        phiTn = weld_strength * PM
+        phiMnx = weld_strength * Sx * good
+        phiMny = weld_strength * Sy * good
+        phiVnx = weld_strength * lenVx
+        phiVny = weld_strength * lenVy
+        phiAn = weld_strength * lenA * good
+        phiTn = weld_strength * PM * bad
 
-        return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn,
+        return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn
 
     def properties(self):
         # updates section properties and returns them. Useful in case of changes to attributes
         self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn = self.calculate_properties(
-            self.group, self.b, self.d, self.weld_strength)
+            self.group, self.b, self.d, self.weld_strength, self.considerAngle)
         return self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn
 
-    def check(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
+    def check_strength(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = self.properties()
         works = True
 
@@ -253,14 +290,19 @@ class WeldGroup:
 if __name__ == '__main__':
     b = 8
     d = 15
-    w = WeldGroup(t=3, group='⨅', b=b, d=d)
+    group = '⨅'
 
-    phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = w.properties()
-    print()
-    print(f'phiMnx = {phiMnx:.2f}')
-    print(f'phiMny = {phiMny:.2f}')
-    print(f'phiVnx = {phiVnx:.2f}')
-    print(f'phiVny = {phiVny:.2f}')
-    print(f'phiAn = {phiAn:.2f}')
-    print(f'phiTn = {phiTn:.2f}')
-    print()
+    print(f'Group is {group}')
+
+    for cons in (True, False):
+        w = WeldGroup(t=3, group=group, b=b, d=d, considerAngle=cons)
+
+        phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = w.properties()
+        print(f'considerAngle is {cons}:')
+        print(f'phiMnx = {phiMnx:.2f}')
+        print(f'phiMny = {phiMny:.2f}')
+        print(f'phiVnx = {phiVnx:.2f}')
+        print(f'phiVny = {phiVny:.2f}')
+        print(f'phiAn = {phiAn:.2f}')
+        print(f'phiTn = {phiTn:.2f}')
+        print()
