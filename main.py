@@ -114,7 +114,6 @@ def resetter(to_be_destroyed):
     root.title(f'Weld Group Strength Calculator')
 
 
-
 if __name__ == '__main__':
     # set up root window with title
     root = Tk()
