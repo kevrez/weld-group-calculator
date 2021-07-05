@@ -24,7 +24,6 @@ class Application(Frame):
         self.grid()
         self.draw_ui()
 
-
     def draw_ui(self):
         self.title_status = Label(self, text="Weld Type: E70XX  -  AISC 360")
         self.title_status.grid(row=30, column=3, sticky='se', padx=(0, 25))
@@ -66,7 +65,6 @@ class Application(Frame):
         self.rowconfigure(1, weight=2)
         self.rowconfigure(2, weight=2)
         self.rowconfigure(3, weight=3)
-
 
     def draw_weldtype(self):
 
@@ -185,7 +183,6 @@ class Application(Frame):
 
         # self.columnconfigure(1, weight=2)
 
-
     def draw_weldgroup(self):
 
         self.f_weld_group = LabelFrame(
@@ -249,16 +246,17 @@ class Application(Frame):
 
         # d label
         self.label_d = Label(self.f_weld_group, text="d:")
-        self.label_d.grid(row=3, column=0, padx=self.PADX_WELD_GROUP, pady=(0,10))
+        self.label_d.grid(
+            row=3, column=0, padx=self.PADX_WELD_GROUP, pady=(0, 10))
 
         # d entry box
         self.entry_d = Entry(self.f_weld_group, width=5,
                              textvariable=self.var_d)
-        self.entry_d.grid(row=3, column=1, pady=(0,10))
+        self.entry_d.grid(row=3, column=1, pady=(0, 10))
 
         # d units label
         self.label_d_units = Label(self.f_weld_group, text="in")
-        self.label_d_units.grid(row=3, column=2, pady=(0,10))
+        self.label_d_units.grid(row=3, column=2, pady=(0, 10))
 
         for i in range(10):
             self.f_weld_group.rowconfigure(i, weight=1)
@@ -266,13 +264,14 @@ class Application(Frame):
 
         self.f_weld_group.rowconfigure(1, weight=2)
 
-
     def draw_settings(self):
 
         STICKY_RADIO = 'nsw'
 
-        self.f_settings = LabelFrame(self, text="Settings")  # height=230, width=230
-        self.f_settings.grid(row=2, column=0, padx=(25, 5),pady=(10, 0), sticky='nesw')
+        self.f_settings = LabelFrame(
+            self, text="Settings")  # height=230, width=230
+        self.f_settings.grid(row=2, column=0, padx=(
+            25, 5), pady=(10, 0), sticky='nesw')
 
         # # Units
         self.label_calc_units = Label(self.f_settings, text='Units:')
@@ -281,44 +280,54 @@ class Application(Frame):
         self.units = StringVar(self)
         self.units.set('in')  # default value
 
-        self.radio_units = Radiobutton(self.f_settings, text="kip-in", value="in", variable=self.units)
+        self.radio_units = Radiobutton(
+            self.f_settings, text="kip-in", value="in", variable=self.units)
         self.radio_units.grid(row=1, column=1, sticky=STICKY_RADIO)
 
-        self.radio_units = Radiobutton(self.f_settings, text="kip-ft", value="ft", variable=self.units)
+        self.radio_units = Radiobutton(
+            self.f_settings, text="kip-ft", value="ft", variable=self.units)
         self.radio_units.grid(row=1, column=2, sticky=STICKY_RADIO)
 
         # Consider Load Angle
-        self.label_considerAngle = Label(self.f_settings, text='Consider Load Angle:')
-        self.label_considerAngle.grid(row=2, column=0, columnspan=3, sticky='w', padx=(5, 0))
+        self.label_considerAngle = Label(
+            self.f_settings, text='Consider Load Angle:')
+        self.label_considerAngle.grid(
+            row=2, column=0, columnspan=3, sticky='w', padx=(5, 0))
 
         self.considerAngle = BooleanVar(self)
         self.considerAngle.set(False)  # default value
 
-        self.radio_considerAngle = Radiobutton(self.f_settings, text="Yes", value=True, variable=self.considerAngle)
+        self.radio_considerAngle = Radiobutton(
+            self.f_settings, text="Yes", value=True, variable=self.considerAngle)
         self.radio_considerAngle.grid(row=3, column=1, sticky=STICKY_RADIO)
 
-        self.radio_considerAngle = Radiobutton(self.f_settings, text="No", value=False, variable=self.considerAngle)
+        self.radio_considerAngle = Radiobutton(
+            self.f_settings, text="No", value=False, variable=self.considerAngle)
         self.radio_considerAngle.grid(row=3, column=2, sticky=STICKY_RADIO)
 
         # Total Utilization/Interaction
-        self.label_util_setting = Label(self.f_settings, text='Interaction Calc Method:')
-        self.label_util_setting.grid(row=4, column=0, columnspan=3, sticky='w', padx=(5, 0))
+        self.label_util_setting = Label(
+            self.f_settings, text='Interaction Calc Method:')
+        self.label_util_setting.grid(
+            row=4, column=0, columnspan=3, sticky='w', padx=(5, 0))
 
         self.util_setting = StringVar(self)
         self.util_setting.set('sum')  # default value
 
-        self.radio_util_setting = Radiobutton(self.f_settings, text="Sum", value="sum", variable=self.util_setting)
-        self.radio_util_setting.grid(row=5, column=1, sticky=STICKY_RADIO, pady=(0, 5))
+        self.radio_util_setting = Radiobutton(
+            self.f_settings, text="Sum", value="sum", variable=self.util_setting)
+        self.radio_util_setting.grid(
+            row=5, column=1, sticky=STICKY_RADIO, pady=(0, 5))
 
-        self.radio_util_setting = Radiobutton(self.f_settings, text="SRSS", value="srss", variable=self.util_setting)
-        self.radio_util_setting.grid(row=5, column=2, sticky=STICKY_RADIO, pady=(0, 5))
-
+        self.radio_util_setting = Radiobutton(
+            self.f_settings, text="SRSS", value="srss", variable=self.util_setting)
+        self.radio_util_setting.grid(
+            row=5, column=2, sticky=STICKY_RADIO, pady=(0, 5))
 
         for i in range(4):
             self.f_settings.columnconfigure(i, weight=1)
         for i in range(6):
             self.f_settings.rowconfigure(i, weight=1)
-
 
     def draw_loads(self):
 
@@ -413,7 +422,6 @@ class Application(Frame):
         for i in range(10):
             self.f_loads.rowconfigure(i, weight=1)
             self.f_loads.columnconfigure(i, weight=1)
-
 
     def draw_results(self):
 
@@ -586,7 +594,6 @@ class Application(Frame):
             self.f_results.rowconfigure(i, weight=1)
             self.f_results.columnconfigure(i, weight=1)
 
-
     def draw_preview(self):
 
         self.f_plot = LabelFrame(self, text="Preview")
@@ -600,7 +607,6 @@ class Application(Frame):
 
         # draw plot
         self.draw_plot()
-
 
     def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(
@@ -623,7 +629,6 @@ class Application(Frame):
         self.tkwidget = self.canvas.get_tk_widget()
         self.tkwidget.grid(sticky='nsew')
 
-
     def add_traces(self):
         self.weldtype.trace_add('write', self.recalc_results)
         self.selected_hss_thickness.trace_add('write', self.recalc_results)
@@ -641,7 +646,6 @@ class Application(Frame):
         self.var_b.trace_add('write', self.recalc_full)
         self.var_d.trace_add('write', self.recalc_full)
         self.selected_weld_group.trace_add('write', self.recalc_full)
-
 
     def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
 
@@ -792,13 +796,11 @@ class Application(Frame):
         # toolbar.update()
         canvas.draw()
 
-
     def reset_plot(self):
         self.tkwidget.destroy()
         self.draw_plot()
         self.recalc_full()
         # self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d, tk_master=self.f_plot, works=works, canvas=self.canvas, toolbar=None)
-
 
     def set_results_NA(self):
         self.var_total_util.set("N/A")
@@ -810,14 +812,13 @@ class Application(Frame):
         self.var_phiAn_util.set(f"N/A")
         self.var_phiTn_util.set(f"N/A")
 
-
     def recalc_results(self, works=True, *args):
         ##########  WELD INFORMATION  ##########
         # take in variables
         wg = self.selected_weld_group.get()
         throat = self.sixteenths[self.selected_throat.get()]
         hss_thickness = self.sixteenths[self.selected_hss_thickness.get()]
-        
+
         isFlareBevel = self.weldtype.get() == "fb"
         considerAngle = self.considerAngle.get()
 
@@ -825,7 +826,7 @@ class Application(Frame):
             b = float(self.var_b.get())
             d = float(self.var_d.get())
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
-                isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
+                                   isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
         except:
             self.set_results_NA()
             return
@@ -834,7 +835,6 @@ class Application(Frame):
 
         # get section properties from weld group
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
-
 
         # get all loading inputs
         Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0
@@ -866,7 +866,7 @@ class Application(Frame):
             print("Strength variables selected but do not exist")
 
         ##########  UTILIZATION   ##########
-        # Determine whether to even run calcs. The program should not run calcs 
+        # Determine whether to even run calcs. The program should not run calcs
         # if any input is > 0 when the associated property is zero.
         # In that case, do not draw weld and set total output to 'N/A'
 
@@ -942,8 +942,8 @@ class Application(Frame):
         if works:
             # calculate total utilization as sum of individual utilizations
             if self.util_setting.get() == 'srss':
-                total_ratio = (util_phiMnx**2 + util_phiMny**2 + util_phiVnx**2 \
-                    + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
+                total_ratio = (util_phiMnx**2 + util_phiMny**2 + util_phiVnx**2
+                               + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
             else:
                 total_ratio = util_phiMnx + util_phiMny + util_phiVnx \
                     + util_phiVny + util_phiAn + util_phiTn
@@ -967,7 +967,6 @@ class Application(Frame):
         else:
             self.set_results_NA()
 
-
     def recalc_full(self, *args):  # *args is necessary to trace variables with function
         """
         Take in inputs from GUI, calculate outputs, draw outputs.
@@ -988,7 +987,6 @@ class Application(Frame):
         self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
                        canvas=self.canvas)
         self.recalc_results(works=works)
-
 
     def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
                       phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):

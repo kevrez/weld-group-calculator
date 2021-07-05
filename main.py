@@ -32,7 +32,7 @@ def savedata():
             shelf['selected_throat'] = app.selected_throat.get()
             shelf['selected_hss_thickness'] = app.selected_hss_thickness.get()
             shelf['selected_weld_group'] = app.selected_weld_group.get()
-            # shelf[''] = 
+            # shelf[''] =
 
         root.title(f'Weld Group Strength Calculator - {filename}')
 
@@ -54,7 +54,8 @@ def loaddata():
     global app
 
     try:
-        filename = askopenfilenames(title="Select Weld .txt File")[0].replace('.db', '')
+        filename = askopenfilenames(title="Select Weld .txt File")[
+            0].replace('.db', '')
         print(filename)
     except IndexError:
         print("No file opened")
@@ -74,33 +75,40 @@ def loaddata():
             app.util_setting.set(shelf['util_setting'])
 
             app.entry_b.delete(0, END)
-            app.entry_b.insert(0, shelf['b']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_b.insert(0, shelf['b'])
 
             app.entry_d.delete(0, END)
-            app.entry_d.insert(0, shelf['d']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_d.insert(0, shelf['d'])
 
             app.entry_Mux.delete(0, END)
-            app.entry_Mux.insert(0, shelf['Mux']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Mux.insert(0, shelf['Mux'])
 
             app.entry_Muy.delete(0, END)
-            app.entry_Muy.insert(0, shelf['Muy']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Muy.insert(0, shelf['Muy'])
 
             app.entry_Vux.delete(0, END)
-            app.entry_Vux.insert(0, shelf['Vux']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Vux.insert(0, shelf['Vux'])
 
             app.entry_Vuy.delete(0, END)
-            app.entry_Vuy.insert(0, shelf['Vuy']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Vuy.insert(0, shelf['Vuy'])
 
             app.entry_Au.delete(0, END)
-            app.entry_Au.insert(0, shelf['Au']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Au.insert(0, shelf['Au'])
 
             app.entry_Tu.delete(0, END)
-            app.entry_Tu.insert(0, shelf['Tu']) # this may need to be converted to a string
+            # this may need to be converted to a string
+            app.entry_Tu.insert(0, shelf['Tu'])
 
             app.recalc_full()
 
             root.title(f'Weld Group Strength Calculator - {filename}')
-
 
     else:
         print("File not read")

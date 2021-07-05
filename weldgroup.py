@@ -39,7 +39,7 @@ class WeldGroup:
             group, b, d, self.weld_strength, self.considerAngle)
 
     def calculate_properties(self, group: str = "=", b: float = 0, d: float = 0,
-        weld_strength: float = 0, considerAngle:bool = False) -> None:
+                             weld_strength: float = 0, considerAngle: bool = False) -> None:
         """
         Calculate the 'section' properties of the inputted weld group based
         on its dimensions and weld strength. Assign the section properties
@@ -49,11 +49,11 @@ class WeldGroup:
         :param b: width of group in x-direction (horizontal)
         :param d: height of group in y-direction (vertical)
         """
-        good = (1 + 0.5*considerAngle) # longitudinal loading
-        bad = (1 - 0.15*considerAngle) # transverse loading
+        trans_factor = (1 + 0.5*considerAngle)  # longitudinal loading
+        long_factor = (1 - 0.15*considerAngle)  # transverse loading
 
-        # print(f'Good is {good}')
-        # print(f'Bad is {bad}')
+        # print(f'trans_factor is {trans_factor}')
+        # print(f'long_factor is {long_factor}')
         # print()
 
         # round small group dimensions to zero in case of typos
@@ -69,8 +69,8 @@ class WeldGroup:
 
         # calculate different properties based on weld group
         elif group == '|':
-            lenVx = d * good
-            lenVy = d * bad
+            lenVx = d * trans_factor
+            lenVy = d * long_factor
             lenA = d
 
             Sx = (d**2) / 6
@@ -80,10 +80,9 @@ class WeldGroup:
             c = 0
             PM = 0
 
-
         elif group == '-':
-            lenVx = b  * bad
-            lenVy = b * good
+            lenVx = b * long_factor
+            lenVy = b * trans_factor
             lenA = b
 
             Sx = (b**2) / 6
@@ -94,8 +93,8 @@ class WeldGroup:
             PM = 0
 
         elif group == '||':
-            lenVx = 2 * d * good
-            lenVy = 2 * d * bad
+            lenVx = 2 * d * trans_factor
+            lenVy = 2 * d * long_factor
             lenA = 2 * d
 
             Sx = (d**2) / 3
@@ -106,8 +105,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == '=':
-            lenVx = 2 * b * bad
-            lenVy = 2 * b * good
+            lenVx = 2 * b * long_factor
+            lenVy = 2 * b * trans_factor
             lenA = 2 * b
 
             Sx = b * d
@@ -118,8 +117,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == '▯':
-            lenVx = 2*b * bad + 2*d * good
-            lenVy = 2*b * good + 2*d * bad
+            lenVx = 2*b * long_factor + 2*d * trans_factor
+            lenVy = 2*b * trans_factor + 2*d * long_factor
             lenA = 2*b + 2*d
 
             Sx = d/3 * (3*b + d)
@@ -130,8 +129,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == '⨅':
-            lenVx = b * bad + 2*d * good
-            lenVy = b * good + 2*d * bad
+            lenVx = b * long_factor + 2*d * trans_factor
+            lenVy = b * trans_factor + 2*d * long_factor
             lenA = b + 2*d
 
             Sxt = d/3 * (2*b + d)
@@ -145,8 +144,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == '╥':
-            lenVx = b * bad + 2*d * good
-            lenVy = b * good + 2*d * bad
+            lenVx = b * long_factor + 2*d * trans_factor
+            lenVy = b * trans_factor + 2*d * long_factor
             lenA = b + 2*d
 
             Sxt = d/3 * (2*b + d)
@@ -160,8 +159,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == '╦':                           # all checked - question
-            lenVx = 2 * (b * bad + d * good)
-            lenVy = 2 * (b * good + d * bad)
+            lenVx = 2 * (b * long_factor + d * trans_factor)
+            lenVy = 2 * (b * trans_factor + d * long_factor)
             lenA = 2 * (b + d)
 
             Sxt = d/3 * (4*b + d)
@@ -175,8 +174,8 @@ class WeldGroup:
             PM = J / c
 
         elif group == "⌶":                           # all checked
-            lenVx = 2 * (2*b * bad + d * good)
-            lenVy = 2 * (2*b * good + d * bad)
+            lenVx = 2 * (2*b * long_factor + d * trans_factor)
+            lenVy = 2 * (2*b * trans_factor + d * long_factor)
             lenA = 2 * (2*b + d)
 
             Sx = d/3 * (6*b + d)
@@ -195,12 +194,12 @@ class WeldGroup:
             c = 0
 
         # assign properties
-        phiMnx = weld_strength * Sx * good
-        phiMny = weld_strength * Sy * good
+        phiMnx = weld_strength * Sx * trans_factor
+        phiMny = weld_strength * Sy * trans_factor
         phiVnx = weld_strength * lenVx
         phiVny = weld_strength * lenVy
-        phiAn = weld_strength * lenA * good
-        phiTn = weld_strength * PM * bad
+        phiAn = weld_strength * lenA * trans_factor
+        phiTn = weld_strength * PM * long_factor
 
         return phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn
 
