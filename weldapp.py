@@ -272,8 +272,7 @@ class Application(Frame):
         STICKY_RADIO = 'nsw'
 
         self.f_settings = LabelFrame(self, text="Settings")  # height=230, width=230
-        self.f_settings.grid(row=2, column=0, padx=(25, 5),
-                          pady=(10, 0), sticky='nesw')
+        self.f_settings.grid(row=2, column=0, padx=(25, 5),pady=(10, 0), sticky='nesw')
 
         # # Units
         self.label_calc_units = Label(self.f_settings, text='Units:')
@@ -282,12 +281,10 @@ class Application(Frame):
         self.units = StringVar(self)
         self.units.set('in')  # default value
 
-        self.radio_units = Radiobutton(
-            self.f_settings, text="kip-in", value="in", variable=self.units)
+        self.radio_units = Radiobutton(self.f_settings, text="kip-in", value="in", variable=self.units)
         self.radio_units.grid(row=1, column=1, sticky=STICKY_RADIO)
 
-        self.radio_units = Radiobutton(
-            self.f_settings, text="kip-ft", value="ft", variable=self.units)
+        self.radio_units = Radiobutton(self.f_settings, text="kip-ft", value="ft", variable=self.units)
         self.radio_units.grid(row=1, column=2, sticky=STICKY_RADIO)
 
         # Consider Load Angle
@@ -297,12 +294,10 @@ class Application(Frame):
         self.considerAngle = BooleanVar(self)
         self.considerAngle.set(False)  # default value
 
-        self.radio_considerAngle = Radiobutton(
-            self.f_settings, text="Yes", value=True, variable=self.considerAngle)
+        self.radio_considerAngle = Radiobutton(self.f_settings, text="Yes", value=True, variable=self.considerAngle)
         self.radio_considerAngle.grid(row=3, column=1, sticky=STICKY_RADIO)
 
-        self.radio_considerAngle = Radiobutton(
-            self.f_settings, text="No", value=False, variable=self.considerAngle)
+        self.radio_considerAngle = Radiobutton(self.f_settings, text="No", value=False, variable=self.considerAngle)
         self.radio_considerAngle.grid(row=3, column=2, sticky=STICKY_RADIO)
 
         # Total Utilization/Interaction
@@ -312,12 +307,10 @@ class Application(Frame):
         self.util_setting = StringVar(self)
         self.util_setting.set('sum')  # default value
 
-        self.radio_util_setting = Radiobutton(
-            self.f_settings, text="Sum", value="sum", variable=self.util_setting)
+        self.radio_util_setting = Radiobutton(self.f_settings, text="Sum", value="sum", variable=self.util_setting)
         self.radio_util_setting.grid(row=5, column=1, sticky=STICKY_RADIO, pady=(0, 5))
 
-        self.radio_util_setting = Radiobutton(
-            self.f_settings, text="SRSS", value="srss", variable=self.util_setting)
+        self.radio_util_setting = Radiobutton(self.f_settings, text="SRSS", value="srss", variable=self.util_setting)
         self.radio_util_setting.grid(row=5, column=2, sticky=STICKY_RADIO, pady=(0, 5))
 
 

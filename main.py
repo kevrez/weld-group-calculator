@@ -1,13 +1,14 @@
 # from tkinter import *
 from tkinter import (Tk, END, Menu)
 from tkinter.filedialog import asksaveasfilename, askopenfilenames
-import pickle
+import shelve
 from weldapp import Application
 
 # NOTE: IN THIS PROGRAM, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
 
 VERSION = '0.9 Beta  -  DO NOT USE FOR DESIGN'
+TITLE = 'Weld Group Strength Calculator'
 
 
 def savedata():
@@ -15,24 +16,25 @@ def savedata():
     global app
 
     if filename:
-        # print("normal save -> " + filename)
-        b = float(app.entry_b.get())
-        d = float(app.entry_d.get())
-        Mux = abs(float(app.entry_Mux.get()))
-        Muy = abs(float(app.entry_Muy.get()))
-        Vux = abs(float(app.entry_Vux.get()))
-        Vuy = abs(float(app.entry_Vuy.get()))
-        Au = abs(float(app.entry_Au.get()))
-        Tu = abs(float(app.entry_Tu.get()))
-        units = app.units.get()
-        considerAngle = app.considerAngle.get()
+        with shelve.open(filename, 'c') as shelf:
+            shelf['b'] = float(app.entry_b.get())
+            shelf['d'] = float(app.entry_d.get())
+            shelf['Mux'] = abs(float(app.entry_Mux.get()))
+            shelf['Muy'] = abs(float(app.entry_Muy.get()))
+            shelf['Vux'] = abs(float(app.entry_Vux.get()))
+            shelf['Vuy'] = abs(float(app.entry_Vuy.get()))
+            shelf['Au'] = abs(float(app.entry_Au.get()))
+            shelf['Tu'] = abs(float(app.entry_Tu.get()))
+            shelf['units'] = app.units.get()
+            shelf['considerAngle'] = app.considerAngle.get()
+            shelf['util_setting'] = app.util_setting.get()
+            shelf['weldtype'] = app.weldtype.get()
+            shelf['selected_throat'] = app.selected_throat.get()
+            shelf['selected_hss_thickness'] = app.selected_hss_thickness.get()
+            shelf['selected_weld_group'] = app.selected_weld_group.get()
+            # shelf[''] = 
 
-        # assign variables that get saved
-        vars = (app.weldtype.get(), app.selected_throat.get(), app.selected_hss_thickness.get(
-        ), app.selected_weld_group.get(), b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle)
-
-        with open(filename, "wb") as file:
-            pickle.dump(vars, file)
+        root.title(f'Weld Group Strength Calculator - {filename}')
 
     else:
         saveasdata()
@@ -41,10 +43,10 @@ def savedata():
 def saveasdata():
     global filename
     filename = asksaveasfilename(
-        title='Choose Filename', defaultextension='.txt', filetypes=[('Text Files', '*.txt')])
+        title='Choose Filename', defaultextension='.db', filetypes=[('.db Files', '*.db')]).replace('.db', '')
+    print(filename)
     if not filename:
         return
-    # print("saving as -> " + filename)
     savedata()
 
 
@@ -52,50 +54,53 @@ def loaddata():
     global app
 
     try:
-        filename = askopenfilenames(title="Select Weld .txt File")[0]
+        filename = askopenfilenames(title="Select Weld .txt File")[0].replace('.db', '')
+        print(filename)
     except IndexError:
         print("No file opened")
         return
-    print(type(filename))
     print("loaded -> " + filename)
 
     if filename:
-        with open(filename, "rb") as file:
-            var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle = pickle.load(
-                file)
+        with shelve.open(filename, 'r') as shelf:
+            # var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle, util_setting = pickle.load(file)
 
-            app.weldtype.set(var_weldtype)
-            app.selected_throat.set(var_selected_throat)
-            app.selected_hss_thickness.set(var_selected_hss_thickness)
-            app.selected_weld_group.set(var_selected_weld_group)
-            app.units.set(units)
-            app.considerAngle.set(considerAngle)
+            app.weldtype.set(shelf['weldtype'])
+            app.selected_throat.set(shelf['selected_throat'])
+            app.selected_hss_thickness.set(shelf['selected_hss_thickness'])
+            app.selected_weld_group.set(shelf['selected_weld_group'])
+            app.units.set(shelf['units'])
+            app.considerAngle.set(shelf['considerAngle'])
+            app.util_setting.set(shelf['util_setting'])
 
             app.entry_b.delete(0, END)
-            app.entry_b.insert(0, b)
+            app.entry_b.insert(0, shelf['b']) # this may need to be converted to a string
 
             app.entry_d.delete(0, END)
-            app.entry_d.insert(0, d)
+            app.entry_d.insert(0, shelf['d']) # this may need to be converted to a string
 
             app.entry_Mux.delete(0, END)
-            app.entry_Mux.insert(0, Mux)
+            app.entry_Mux.insert(0, shelf['Mux']) # this may need to be converted to a string
 
             app.entry_Muy.delete(0, END)
-            app.entry_Muy.insert(0, Muy)
+            app.entry_Muy.insert(0, shelf['Muy']) # this may need to be converted to a string
 
             app.entry_Vux.delete(0, END)
-            app.entry_Vux.insert(0, Vux)
+            app.entry_Vux.insert(0, shelf['Vux']) # this may need to be converted to a string
 
             app.entry_Vuy.delete(0, END)
-            app.entry_Vuy.insert(0, Vuy)
+            app.entry_Vuy.insert(0, shelf['Vuy']) # this may need to be converted to a string
 
             app.entry_Au.delete(0, END)
-            app.entry_Au.insert(0, Au)
+            app.entry_Au.insert(0, shelf['Au']) # this may need to be converted to a string
 
             app.entry_Tu.delete(0, END)
-            app.entry_Tu.insert(0, Tu)
+            app.entry_Tu.insert(0, shelf['Tu']) # this may need to be converted to a string
 
             app.recalc_full()
+
+            root.title(f'Weld Group Strength Calculator - {filename}')
+
 
     else:
         print("File not read")
@@ -106,6 +111,8 @@ def resetter(to_be_destroyed):
     to_be_destroyed.destroy()
     global app
     app = Application(root, VERSION)
+    root.title(f'Weld Group Strength Calculator')
+
 
 
 if __name__ == '__main__':
@@ -113,7 +120,7 @@ if __name__ == '__main__':
     root = Tk()
     root.geometry('900x480')
     root.minsize(width=900, height=480)
-    root.title("Weld Group Strength Calculator")
+    root.title(TITLE)
     root.resizable(width=True, height=True)
 
     # working file name for save and open
