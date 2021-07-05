@@ -38,8 +38,7 @@ class Application(Frame):
         # draw labelframes and widgets
         self.draw_weldtype()
         self.draw_weldgroup()
-        self.draw_considerAngle()
-        self.draw_units()
+        self.draw_settings()
         self.draw_loads()
         self.draw_results()
         self.draw_preview()
@@ -71,9 +70,6 @@ class Application(Frame):
 
     def draw_weldtype(self):
 
-        ##### set up Weld Type LabelFrame, variables, widgets #####
-
-        ### LabelFrame ###
         self.f_weld_type = LabelFrame(
             self, text="Weld Type")  # height=230, width=230
         self.f_weld_type.grid(row=0, column=0, padx=(
@@ -192,9 +188,6 @@ class Application(Frame):
 
     def draw_weldgroup(self):
 
-        ##### set up Weld Group LabelFrame, variables, widgets #####
-
-        ### LabelFrame ###
         self.f_weld_group = LabelFrame(
             self, text="Weld Group")  # height=230, width=230
         self.f_weld_group.grid(row=1, column=0, padx=(
@@ -274,65 +267,68 @@ class Application(Frame):
         self.f_weld_group.rowconfigure(1, weight=2)
 
 
-    def draw_units(self):
+    def draw_settings(self):
 
-        ##### set up Units LabelFrame, variables, widgets #####
+        STICKY_RADIO = 'nsw'
 
-        ### LabelFrame ###
-        self.f_units = LabelFrame(self, text="Units")  # height=230, width=230
-        self.f_units.grid(row=3, column=0, padx=(25, 5),
+        self.f_settings = LabelFrame(self, text="Settings")  # height=230, width=230
+        self.f_settings.grid(row=2, column=0, padx=(25, 5),
                           pady=(10, 0), sticky='nesw')
+
+        # # Units
+        self.label_calc_units = Label(self.f_settings, text='Units:')
+        self.label_calc_units.grid(row=0, column=0, sticky='w', padx=(5, 0))
 
         self.units = StringVar(self)
         self.units.set('in')  # default value
 
         self.radio_units = Radiobutton(
-            self.f_units, text="kip-in", value="in", variable=self.units)
-        self.radio_units.grid(row=0, column=0, padx=(
-            10, 0), pady=(5, 5), sticky='nsew')
+            self.f_settings, text="kip-in", value="in", variable=self.units)
+        self.radio_units.grid(row=1, column=1, sticky=STICKY_RADIO)
 
         self.radio_units = Radiobutton(
-            self.f_units, text="kip-ft", value="ft", variable=self.units)
-        self.radio_units.grid(row=0, column=1, padx=(
-            0, 25), pady=(5, 5), sticky='nsew')
+            self.f_settings, text="kip-ft", value="ft", variable=self.units)
+        self.radio_units.grid(row=1, column=2, sticky=STICKY_RADIO)
 
-        for i in range(2):
-            self.f_units.rowconfigure(i, weight=1)
-            self.f_units.columnconfigure(i, weight=1)
-
-
-    def draw_considerAngle(self):
-
-        ##### set up Consider Load Angle LabelFrame, variables, widgets #####
-
-        ### LabelFrame ###
-        self.f_considerAngle = LabelFrame(self, text="Consider Load Angle")  # height=230, width=230
-        self.f_considerAngle.grid(row=2, column=0, padx=(25, 5),
-                          pady=(10, 0), sticky='nesw')
+        # Consider Load Angle
+        self.label_considerAngle = Label(self.f_settings, text='Consider Load Angle:')
+        self.label_considerAngle.grid(row=2, column=0, columnspan=3, sticky='w', padx=(5, 0))
 
         self.considerAngle = BooleanVar(self)
         self.considerAngle.set(False)  # default value
 
         self.radio_considerAngle = Radiobutton(
-            self.f_considerAngle, text="Yes", value=True, variable=self.considerAngle)
-        self.radio_considerAngle.grid(row=0, column=0, padx=(
-            10, 0), pady=(5, 5), sticky='nsew')
+            self.f_settings, text="Yes", value=True, variable=self.considerAngle)
+        self.radio_considerAngle.grid(row=3, column=1, sticky=STICKY_RADIO)
 
         self.radio_considerAngle = Radiobutton(
-            self.f_considerAngle, text="No", value=False, variable=self.considerAngle)
-        self.radio_considerAngle.grid(row=0, column=1, padx=(
-            0, 25), pady=(5, 5), sticky='nsew')
+            self.f_settings, text="No", value=False, variable=self.considerAngle)
+        self.radio_considerAngle.grid(row=3, column=2, sticky=STICKY_RADIO)
 
-        for i in range(2):
-            self.f_considerAngle.rowconfigure(i, weight=1)
-            self.f_considerAngle.columnconfigure(i, weight=1)
+        # Total Utilization/Interaction
+        self.label_util_setting = Label(self.f_settings, text='Interaction Calc Method:')
+        self.label_util_setting.grid(row=4, column=0, columnspan=3, sticky='w', padx=(5, 0))
+
+        self.util_setting = StringVar(self)
+        self.util_setting.set('sum')  # default value
+
+        self.radio_util_setting = Radiobutton(
+            self.f_settings, text="Sum", value="sum", variable=self.util_setting)
+        self.radio_util_setting.grid(row=5, column=1, sticky=STICKY_RADIO, pady=(0, 5))
+
+        self.radio_util_setting = Radiobutton(
+            self.f_settings, text="SRSS", value="srss", variable=self.util_setting)
+        self.radio_util_setting.grid(row=5, column=2, sticky=STICKY_RADIO, pady=(0, 5))
+
+
+        for i in range(4):
+            self.f_settings.columnconfigure(i, weight=1)
+        for i in range(6):
+            self.f_settings.rowconfigure(i, weight=1)
 
 
     def draw_loads(self):
 
-        ##### set up Loads LabelFrame, widgets #####
-
-        ### LabelFrame ###
         self.f_loads = LabelFrame(self, text="Loads")  # height=230, width=230
         self.f_loads.grid(row=0, column=1, padx=(5, 5),
                           pady=(10, 0), sticky='nesw', rowspan=1)
@@ -428,16 +424,13 @@ class Application(Frame):
 
     def draw_results(self):
 
-        ##### set up Results LabelFrame, variables, widgets #####
-
-        ### LabelFrame ###
         self.f_results = LabelFrame(self, text="Results")
 
         for i in range(10):
             self.f_results.rowconfigure(i, weight=2)
             self.f_results.columnconfigure(i, weight=2)
 
-        self.f_results.grid(row=1, column=1, rowspan=3,
+        self.f_results.grid(row=1, column=1, rowspan=2,
                             padx=(5, 5), pady=(10, 0), sticky='nesw')
 
         ### widgets ###
@@ -602,9 +595,7 @@ class Application(Frame):
 
 
     def draw_preview(self):
-        ##### set up Plot LabelFrame, variables, widgets #####
 
-        ### LabelFrame ###
         self.f_plot = LabelFrame(self, text="Preview")
 
         for i in range(10):
@@ -612,7 +603,7 @@ class Application(Frame):
             self.f_plot.columnconfigure(i, weight=1)
 
         self.f_plot.grid(row=0, column=2, padx=(5, 25), pady=(
-            10, 0), rowspan=4, columnspan=2, sticky='nse')
+            10, 0), rowspan=3, columnspan=2, sticky='nse')
 
         # draw plot
         self.draw_plot()
@@ -644,20 +635,19 @@ class Application(Frame):
         self.weldtype.trace_add('write', self.recalc_results)
         self.selected_hss_thickness.trace_add('write', self.recalc_results)
         self.selected_throat.trace_add('write', self.recalc_results)
-        self.selected_weld_group.trace_add('write', self.recalc_full)
         self.considerAngle.trace_add('write', self.recalc_results)
-
-        self.var_b.trace_add('write', self.recalc_full)
-        self.var_d.trace_add('write', self.recalc_full)
-
+        self.util_setting.trace_add('write', self.recalc_results)
         self.units.trace_add('write', self.recalc_results)
-
         self.var_Mux.trace_add('write', self.recalc_results)
         self.var_Muy.trace_add('write', self.recalc_results)
         self.var_Vux.trace_add('write', self.recalc_results)
         self.var_Vuy.trace_add('write', self.recalc_results)
         self.var_Au.trace_add('write', self.recalc_results)
         self.var_Tu.trace_add('write', self.recalc_results)
+
+        self.var_b.trace_add('write', self.recalc_full)
+        self.var_d.trace_add('write', self.recalc_full)
+        self.selected_weld_group.trace_add('write', self.recalc_full)
 
 
     def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
@@ -829,30 +819,25 @@ class Application(Frame):
 
 
     def recalc_results(self, works=True, *args):
-        ##########  WELD TYPE  ##########
+        ##########  WELD INFORMATION  ##########
         # take in variables
         wg = self.selected_weld_group.get()
         throat = self.sixteenths[self.selected_throat.get()]
         hss_thickness = self.sixteenths[self.selected_hss_thickness.get()]
-        try:
-            b = float(self.var_b.get())
-            d = float(self.var_d.get())
-        except ValueError:
-            # print("Tried to get b or d but value was empty")
-            pass
-
+        
         isFlareBevel = self.weldtype.get() == "fb"
         considerAngle = self.considerAngle.get()
 
-        ##########  SECTION PROPERTIES & LOADS  ##########
-
-        # create instance of weld group to pull section properties
         try:
+            b = float(self.var_b.get())
+            d = float(self.var_d.get())
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                 isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
         except:
             self.set_results_NA()
             return
+
+        ##########  SECTION PROPERTIES & LOADS  ##########
 
         # get section properties from weld group
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
@@ -888,9 +873,9 @@ class Application(Frame):
             print("Strength variables selected but do not exist")
 
         ##########  UTILIZATION   ##########
-        # First, need to determine whether to even run calcs. The program should
-        # not run calcs if any input is > 0 when the associated property is zero.
-        # In that case, set 'works' to False and the total output will be 'N/A'
+        # Determine whether to even run calcs. The program should not run calcs 
+        # if any input is > 0 when the associated property is zero.
+        # In that case, do not draw weld and set total output to 'N/A'
 
         # for each section property: check for the case mentioned above,
         # calculate utilization, draw utilization
@@ -904,8 +889,6 @@ class Application(Frame):
                     util_phiMnx = Mux / phiMnx * 100  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiMnx = 0
-                    # delete for deployment
-                    # print("phiMnx is 0 and force provided is 0")
                 self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
 
             # Mny
@@ -917,8 +900,6 @@ class Application(Frame):
                     util_phiMny = Muy / phiMny * 100  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiMny = 0
-                    # delete for deployment
-                    # print("phiMny is 0 and force provided is 0")
                 self.var_phiMny_util.set(f"{util_phiMny:.1f} %")
 
             # Vnx
@@ -930,8 +911,6 @@ class Application(Frame):
                     util_phiVnx = Vux / phiVnx * 100  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiVnx = 0
-                    # delete for deployment
-                    # print("phiVnx is 0 and force provided is 0")
                 self.var_phiVnx_util.set(f"{util_phiVnx:.1f} %")
 
             # Vny
@@ -943,8 +922,6 @@ class Application(Frame):
                     util_phiVny = Vuy / phiVny * 100  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiVny = 0
-                    # delete for deployment
-                    # print("phiVny is 0 and force provided is 0")
                 self.var_phiVny_util.set(f"{util_phiVny:.1f} %")
 
             # An
@@ -956,8 +933,6 @@ class Application(Frame):
                     util_phiAn = Au / phiAn * 100  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiAn = 0
-                    # delete for deployment
-                    # print("An is 0 and force provided is 0")
                 self.var_phiAn_util.set(f"{util_phiAn:.1f} %")
 
             # Tn
@@ -969,27 +944,29 @@ class Application(Frame):
                     util_phiTn = (Tu / phiTn * 100)  # individual utilization
                 except ZeroDivisionError:  # in case we get a 0/0
                     util_phiTn = 0
-                    # delete for deployment
-                    # print("Tn is 0 and force provided is 0")
                 self.var_phiTn_util.set(f"{util_phiTn:.1f} %")
 
         if works:
             # calculate total utilization as sum of individual utilizations
-            total_ratio = util_phiMnx + util_phiMny + \
-                util_phiVnx + util_phiVny + util_phiAn + util_phiTn
+            if self.util_setting.get() == 'srss':
+                total_ratio = (util_phiMnx**2 + util_phiMny**2 + util_phiVnx**2 \
+                    + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
+            else:
+                total_ratio = util_phiMnx + util_phiMny + util_phiVnx \
+                    + util_phiVny + util_phiAn + util_phiTn
 
             # draw utilization value in different colors depending on percentage
-            if total_ratio <= 90:  # yellow text for percentages above 90
+            if total_ratio <= 90:  # green text when weld is ok
                 self.var_total_util.set(f"{total_ratio:.1f} %")
                 self.label_total_utilization.config(
                     font="helvetica 9 bold", fg="green")
 
-            elif total_ratio <= 100:  # red text for percentages above 100
+            elif total_ratio <= 100:  # orange text when color is between 90 and 100
                 self.var_total_util.set(f"{total_ratio:.1f} %")
                 self.label_total_utilization.config(
                     font="helvetica 9 bold", fg="orange")
 
-            else:  # green text when weld is ok
+            else:  # red text when percentage is above 100
                 self.var_total_util.set(f"{total_ratio:.1f} %")
                 self.label_total_utilization.config(
                     font="helvetica 9 bold", fg="red")

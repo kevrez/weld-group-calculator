@@ -109,11 +109,10 @@ def resetter(to_be_destroyed):
 
 
 if __name__ == '__main__':
-    ################################# DRAW GUI #################################
     # set up root window with title
     root = Tk()
-    root.geometry('900x465')
-    root.minsize(width=900, height=465)
+    root.geometry('900x480')
+    root.minsize(width=900, height=480)
     root.title("Weld Group Strength Calculator")
     root.resizable(width=True, height=True)
 
