@@ -58,7 +58,9 @@ class WeldGroup:
 
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
-            length = 0
+            lenVx = 0
+            lenVy = 0
+            lenA = 0
 
             Sx = 0
             Sy = 0
@@ -186,7 +188,9 @@ class WeldGroup:
             PM = J / c
 
         else:
-            length = 0
+            lenVx = 0
+            lenVy = 0
+            lenA = 0
             Sx = 0
             Sy = 0
             J = 0
