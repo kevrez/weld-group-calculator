@@ -610,7 +610,7 @@ class Application(Frame):
 
     def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(
-            figsize=(4, 10))  # figsize=(4.6, 4.6)
+            figsize=(4.2, 10))  # figsize=(4.6, 4.6)
         self.fig1.set_tight_layout(True)
         self.ax1.axvline(color='black', linestyle=':')
         self.ax1.axhline(color='black', linestyle=':')

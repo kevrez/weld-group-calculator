@@ -3,6 +3,7 @@ from tkinter import (Tk, END, Menu)
 from tkinter.filedialog import asksaveasfilename, askopenfilenames
 import shelve
 from weldapp import Application
+import os
 
 # NOTE: IN THIS PROGRAM, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
@@ -34,7 +35,7 @@ def savedata():
             shelf['selected_weld_group'] = app.selected_weld_group.get()
             # shelf[''] =
 
-        root.title(f'Weld Group Strength Calculator - {filename}')
+        set_title(root, filename)
 
     else:
         saveasdata()
@@ -107,8 +108,7 @@ def loaddata():
             app.entry_Tu.insert(0, shelf['Tu'])
 
             app.recalc_full()
-
-            root.title(f'Weld Group Strength Calculator - {filename}')
+            set_title(root, filename)
 
     else:
         print("File not read")
@@ -119,14 +119,21 @@ def resetter(to_be_destroyed):
     to_be_destroyed.destroy()
     global app
     app = Application(root, VERSION)
-    root.title(f'Weld Group Strength Calculator')
+    set_title(root)
+
+
+def set_title(root, full_path=None):
+    if full_path:
+        root.title(f'Weld Group Strength Calculator - {os.path.split(full_path)[-1]}')
+    else:
+        root.title(f'Weld Group Strength Calculator')
 
 
 if __name__ == '__main__':
     # set up root window with title
     root = Tk()
-    root.geometry('900x480')
-    root.minsize(width=900, height=480)
+    root.geometry('900x500')
+    root.minsize(width=900, height=500)
     root.title(TITLE)
     root.resizable(width=True, height=True)
 
