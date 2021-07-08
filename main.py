@@ -65,8 +65,6 @@ def loaddata():
 
     if filename:
         with shelve.open(filename, 'r') as shelf:
-            # var_weldtype, var_selected_throat, var_selected_hss_thickness, var_selected_weld_group, b, d, Mux, Muy, Vux, Vuy, Au, Tu, units, considerAngle, util_setting = pickle.load(file)
-
             app.weldtype.set(shelf['weldtype'])
             app.selected_throat.set(shelf['selected_throat'])
             app.selected_hss_thickness.set(shelf['selected_hss_thickness'])
@@ -76,35 +74,27 @@ def loaddata():
             app.util_setting.set(shelf['util_setting'])
 
             app.entry_b.delete(0, END)
-            # this may need to be converted to a string
             app.entry_b.insert(0, shelf['b'])
 
             app.entry_d.delete(0, END)
-            # this may need to be converted to a string
             app.entry_d.insert(0, shelf['d'])
 
             app.entry_Mux.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Mux.insert(0, shelf['Mux'])
 
             app.entry_Muy.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Muy.insert(0, shelf['Muy'])
 
             app.entry_Vux.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Vux.insert(0, shelf['Vux'])
 
             app.entry_Vuy.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Vuy.insert(0, shelf['Vuy'])
 
             app.entry_Au.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Au.insert(0, shelf['Au'])
 
             app.entry_Tu.delete(0, END)
-            # this may need to be converted to a string
             app.entry_Tu.insert(0, shelf['Tu'])
 
             app.recalc_full()
@@ -132,8 +122,8 @@ def set_title(root, full_path=None):
 if __name__ == '__main__':
     # set up root window with title
     root = Tk()
-    root.geometry('900x500')
-    root.minsize(width=900, height=500)
+    root.geometry('900x475')
+    root.minsize(width=850, height=450)
     root.title(TITLE)
     root.resizable(width=True, height=True)
 

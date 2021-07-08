@@ -211,7 +211,7 @@ class Application(Frame):
 
         # tuple that allows correct placement of the widgets
         self.PADX_WELD_GROUP = (25, 0)
-        self.PADY_WELD_GROUP = (5, 0)
+        self.PADY_WELD_GROUP = (5, 5)
 
         # weld group dropdown
         self.dropdown_weld_group = OptionMenu(
@@ -233,30 +233,30 @@ class Application(Frame):
 
         # b label
         self.label_b = Label(self.f_weld_group, text="b:")
-        self.label_b.grid(row=2, column=0, padx=self.PADX_WELD_GROUP)
+        self.label_b.grid(row=2, column=0, padx=self.PADX_WELD_GROUP, pady=self.PADY_WELD_GROUP)
 
         # b entry box
         self.entry_b = Entry(self.f_weld_group, width=5,
                              textvariable=self.var_b)
-        self.entry_b.grid(row=2, column=1)
+        self.entry_b.grid(row=2, column=1, pady=self.PADY_WELD_GROUP, ipady=2)
 
         # b units label
         self.label_b_units = Label(self.f_weld_group, text="in")
-        self.label_b_units.grid(row=2, column=2)
+        self.label_b_units.grid(row=2, column=2, pady=self.PADY_WELD_GROUP)
 
         # d label
         self.label_d = Label(self.f_weld_group, text="d:")
         self.label_d.grid(
-            row=3, column=0, padx=self.PADX_WELD_GROUP, pady=(0, 10))
+            row=3, column=0, padx=self.PADX_WELD_GROUP, pady=(3, 10))
 
         # d entry box
         self.entry_d = Entry(self.f_weld_group, width=5,
                              textvariable=self.var_d)
-        self.entry_d.grid(row=3, column=1, pady=(0, 10))
+        self.entry_d.grid(row=3, column=1, pady=(3, 10), ipady=2)
 
         # d units label
         self.label_d_units = Label(self.f_weld_group, text="in")
-        self.label_d_units.grid(row=3, column=2, pady=(0, 10))
+        self.label_d_units.grid(row=3, column=2, pady=(3, 10))
 
         for i in range(10):
             self.f_weld_group.rowconfigure(i, weight=1)
@@ -273,7 +273,7 @@ class Application(Frame):
         self.f_settings.grid(row=2, column=0, padx=(
             25, 5), pady=(10, 0), sticky='nesw')
 
-        # # Units
+        # Units
         self.label_calc_units = Label(self.f_settings, text='Units:')
         self.label_calc_units.grid(row=0, column=0, sticky='w', padx=(5, 0))
 
@@ -610,7 +610,7 @@ class Application(Frame):
 
     def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(
-            figsize=(4.2, 10))  # figsize=(4.6, 4.6)
+            figsize=(4, 10))  # figsize=(4.6, 4.6)
         self.fig1.set_tight_layout(True)
         self.ax1.axvline(color='black', linestyle=':')
         self.ax1.axhline(color='black', linestyle=':')
@@ -818,21 +818,21 @@ class Application(Frame):
         wg = self.selected_weld_group.get()
         throat = self.sixteenths[self.selected_throat.get()]
         hss_thickness = self.sixteenths[self.selected_hss_thickness.get()]
-
         isFlareBevel = self.weldtype.get() == "fb"
         considerAngle = self.considerAngle.get()
 
+        # set up weld group, and if it fails, set N/A and cancel operation
         try:
             b = float(self.var_b.get())
             d = float(self.var_d.get())
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                                    isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
-        except:
+        except Exception as e:
+            print(e)
             self.set_results_NA()
             return
 
         ##########  SECTION PROPERTIES & LOADS  ##########
-
         # get section properties from weld group
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
 
@@ -863,7 +863,7 @@ class Application(Frame):
             self.var_phiAn.set(f"{phiAn:.1f}")
             self.var_phiTn.set(f"{phiTn:.1f}")
         except AttributeError:
-            print("Strength variables selected but do not exist")
+            print("Failed to set up one or more strength variables.")
 
         ##########  UTILIZATION   ##########
         # Determine whether to even run calcs. The program should not run calcs
@@ -872,6 +872,9 @@ class Application(Frame):
 
         # for each section property: check for the case mentioned above,
         # calculate utilization, draw utilization
+
+        # TODO: Put individual checks into a function
+
         # Mnx
         if works:
             if (phiMnx == 0) and (Mux != 0):  # force inputted but zero for the section property

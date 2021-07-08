@@ -87,8 +87,8 @@ class WeldGroup:
             lenVy = b * trans_factor
             lenA = b
 
-            Sx = (b**2) / 6
-            Sy = 0
+            Sx = 0
+            Sy = (b**2) / 6
 
             J = 0
             c = 0
@@ -157,22 +157,26 @@ class WeldGroup:
 
             J = d**3 / 3 * ((2*b + d)/(b + 2*d)) + b**3 / 12
             Ct = d**2 / (b + 2*d)
-            c = (Ct**2 + (b/2)**2)**0.5
+            Cb = d * ((b+d) / (b + 2*d))
+            Cu = max(Ct, Cb)
+            c = (Cu**2 + (b/2)**2)**0.5
             PM = J / c
 
-        elif group == '╦':                           # all checked - question
+        elif group == '╦':
             lenVx = 2 * (b * long_factor + d * trans_factor)
             lenVy = 2 * (b * trans_factor + d * long_factor)
             lenA = 2 * (b + d)
 
             Sxt = d/3 * (4*b + d)
-            Sxb = (4*b * d**2 + d**3) / (6*b + 3*d)
+            Sxb = d**2 / 3 * ((4*b + d) / (2*b + d))
             Sx = min(Sxt, Sxb)
-            Sy = b / 3
+            Sy = b**2 / 3
 
             J = d**3 / 6 * ((4*b + d)/(b+d)) + b**3 / 6
             Ct = d**2 / (2 * (b+d))
-            c = (Ct**2 + (b/2)**2)**0.5
+            Cb = d/2 * ((2*b + d) / (b+d))
+            Cu = max(Ct, Cb)
+            c = (Cu**2 + (b/2)**2)**0.5
             PM = J / c
 
         elif group == "⌶":                           # all checked
