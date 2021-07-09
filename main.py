@@ -44,7 +44,8 @@ def savedata():
 def saveasdata():
     global filename
     filename = asksaveasfilename(
-        title='Choose Filename', defaultextension='.db', filetypes=[('.db Files', '*.db')]).replace('.db', '')
+        title='Choose Filename', defaultextension='.db', 
+        filetypes=[('.db Files', '*.db')]).replace('.db', '')
     print(filename)
     if not filename:
         return
@@ -114,7 +115,8 @@ def resetter(to_be_destroyed):
 
 def set_title(root, full_path=None):
     if full_path:
-        root.title(f'Weld Group Strength Calculator - {os.path.split(full_path)[-1]}')
+        root.title(
+            f'Weld Group Strength Calculator - {os.path.split(full_path)[-1]}')
     else:
         root.title(f'Weld Group Strength Calculator')
 

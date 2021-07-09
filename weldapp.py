@@ -233,7 +233,8 @@ class Application(Frame):
 
         # b label
         self.label_b = Label(self.f_weld_group, text="b:")
-        self.label_b.grid(row=2, column=0, padx=self.PADX_WELD_GROUP, pady=self.PADY_WELD_GROUP)
+        self.label_b.grid(
+            row=2, column=0, padx=self.PADX_WELD_GROUP, pady=self.PADY_WELD_GROUP)
 
         # b entry box
         self.entry_b = Entry(self.f_weld_group, width=5,
