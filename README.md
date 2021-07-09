@@ -27,16 +27,16 @@ Section J allows for an increase of up to 50% in calculated weld strength for we
 This increase, however, must be accompanied by a reduction of 15% in the calculated strength of welds loaded parallel to the line of the weld. 
 Expressed as equations, the user is allowed to take the maximum of the following formulas to calculate the strength of the weld group:
 
-(1) R<sub>n</sub> = R<sub>nwl</sub> + R<sub>nwt</sub> (Equation J2/-6a)
+- R<sub>n</sub> = R<sub>nwl</sub> + R<sub>nwt</sub> (Equation J2/-6a)
 
-(2) R<sub>n</sub> = 0.85 • R<sub>nwl</sub> + 1.5 • R<sub>nwt</sub> (Equation J2-6b)
+- R<sub>n</sub> = 0.85 • R<sub>nwl</sub> + 1.5 • R<sub>nwt</sub> (Equation J2-6b)
 
 ## Moment:
 Moment capacity is calculated from the section modulus (S<sub>x</sub> or S<sub>y</sub>) provided by Blodgett from the weld geometry from the appropriate formula. 
 The section modulus is then multiplied by the linear strength of the selected weld to obtain a moment capacity in kip-inches. 
 It is then converted to kip-ft as necessary, separate from the calculation.
 
-Weld groups with aS<sub>y</sub>mmetrical shapes have multiple values for S<sub>x</sub>, related to top and bottom of the weld group. 
+Weld groups with asymmetrical shapes have multiple values for S<sub>x</sub>, related to top and bottom of the weld group. 
 This program uses the minimum of the two values (S<sub>xt</sub> and S<sub>xb</sub>) as the group's section modulus in order to determine the strength of the section.
 
 ## Shear & Axial Forces
@@ -59,7 +59,7 @@ Utilization values are calculated differently than the method that Blodgett sugg
 - Multiply the value of each section property by the weld strength to obtain the section's strength for that property
 - Calculate an individual utilization ratio for each force/section property pair
 - Combine the individual utilization ratios, either by adding them directly, or by using the square-root-of-sum-of-squares (SRSS) method
-- Determine whether the section has sufficient strength by comparing the total utilization to 1.0. If a value above 1.0 is obtained, the section is insufficient to resist the required loading, and the weld must be upsized
+- Determine whether the section has sufficient strength by comparing the total utilization to 1.0. If a value above 1.0 is obtained, the section is insufficient to resist the required loading, and the weld must be upsized or the section geometry updated
 
 ## Section Property Formulas
 
@@ -255,3 +255,18 @@ When load angle is considered:
 - c = (b<sup>2</sup> + d<sup>2</sup>)<sup>1/2</sup> / 2
 
 - PM = J / c
+
+### Section Properties
+Note: f<sub>T</sub> and f<sub>L</sub> are applied for shear and axial properties when calculating the 'effective' length of weld within the weld group.
+
+- &phi;M<sub>nx</sub> = &phi;R<sub>n</sub> • Sx • f<sub>T</sub>
+
+- &phi;M<sub>ny</sub> = &phi;R<sub>n</sub> • Sy • f<sub>T</sub>
+
+- &phi;V<sub>nx</sub> = &phi;R<sub>n</sub> • L<sub>Vx</sub>
+
+- &phi;V<sub>ny</sub> = &phi;R<sub>n</sub> • L<sub>Vy</sub>
+
+- &phi;A<sub>n</sub> = &phi;R<sub>n</sub> • L<sub>A</sub> • f<sub>T</sub>
+
+- &phi;T<sub>n</sub> = &phi;R<sub>n</sub> • PM • f<sub>L</sub>
