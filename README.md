@@ -1,3 +1,5 @@
+<!-- Welds by Kevin Reznicek - Uzun+Case - Documentation Draft - 07/13/2021 -->
+
 # Weld Group Calculator
 This program is a calculator for fillet and flare bevel welds in various arrangements, developed by Kevin Reznicek for the use of Uzun+Case Engineers in Atlanta, GA.
 
@@ -7,8 +9,9 @@ The equations and calculation assumptions used in the program are currently in n
 Before using this application, it is your responsibility to read all of the documentation. 
 The equations utilized in the program for each weld group are enumerated in this documentation.
 
-**None of the contributors will be liable for any element of design or construction related to the use of this software. It is the engineer's responsibility to determine adequacy of design. This tool is merely intended to aid in simplifying the design process.**
-
+**None of the contributors will be liable for any element of design or construction related to the use of this software. 
+It is the engineer's responsibility to determine adequacy of design.
+This tool is merely intended to aid in simplifying the design process.**
 
 # Documentation: 
 In this program, weld strength is calculated using the provisions in AISC Section J, assuming E70XX electrodes and SMAW welding. 
@@ -62,9 +65,9 @@ This modulus is multiplied by the linear weld strength to obtain a strength in k
 When the effect of the load angle is considered with respect to torsion, the weld strength is considered to always be multiplied by the 0.85 factor from equation J2-6b.
 
 ## Utilization & Interaction
-Utilization values are calculated differently than the method that Blodgett suggests in WELDED CONNECTIONS. The approach used is based on the same root principles, but was selected due to added ease of implementation:
+Utilization values are calculated differently than the method that Blodgett suggests in *Welded Connections*. The approach used is based on the same root principles, but was selected due to added ease of implementation:
 - Determine the maximum loading on the weld group, considering moment in each direction, shear in each direction, axial force, and torsional force
-- Calculate the section properties of the weld group
+- Calculate the section moduli and effective lengths of the weld group
 - Arbitrarily select a weld size and calculate its linear strength
 - Multiply the value of each section property by the weld strength to obtain the section's strength for each property
 - Calculate an individual utilization ratio for each force/section property pair
@@ -103,7 +106,7 @@ When load angle is considered:
 
 - PM = 0
 
-### Weld Group 2: - Single Horizontal Line):
+### Weld Group 2: - Single Horizontal Line:
 - L<sub>V<sub>x</sub></sub> = b • f<sub>L</sub>
 
 - L<sub>V<sub>y</sub></sub> = b • f<sub>T</sub>
@@ -155,7 +158,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 5: ▯ Rectangle):
+### Weld Group 5: ▯ Rectangle:
 - L<sub>V<sub>x</sub></sub> = 2b • f<sub>L</sub> + 2d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = 2b • f<sub>T</sub> + 2d • f<sub>L</sub>
@@ -195,7 +198,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 7: ╥ Web and Flange of T- or ⌶-Section): 
+### Weld Group 7: ╥ Web and Flange of T- or ⌶-Section: 
 - L<sub>V<sub>x</sub></sub> = b • f<sub>L</sub> + 2d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = b • f<sub>T</sub> + 2d • f<sub>L</sub>
