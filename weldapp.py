@@ -829,7 +829,7 @@ class Application(Frame):
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                                    isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
         except Exception as e:
-            print(e)
+            # print(e)
             self.set_results_NA()
             return
 
