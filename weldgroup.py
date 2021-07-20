@@ -215,64 +215,6 @@ class WeldGroup:
         # returns current section properties
         return self.phiMnx, self.phiMny, self.phiVnx, self.phiVny, self.phiAn, self.phiTn
 
-    def check_indiv_util(self, force:int = 0, strength:int = 0):
-        force = abs(force)
-        if force == strength == 0:
-            return 0
-        elif strength == 0:
-            return -1
-        else:
-            return force / strength
-
-    def check_strength(self, Mux: float = 0, Muy: float = 0, Vux: float = 0, Vuy: float = 0, Au: float = 0, Tu: float = 0):
-        phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = self.properties()
-        works = True
-
-        # Mnx
-        util_phiMnx = self.check_indiv_util(Mux, phiMnx) * 100
-        if util_phiMnx == -100:
-            util_phiMnx = 0
-            works = False
-
-        # Mny
-        util_phiMny = self.check_indiv_util(Muy, phiMny) * 100
-        if util_phiMny == -100:
-            util_phiMny = 0
-            works = False
-
-        # Vnx
-        util_phiVnx = self.check_indiv_util(Vux, phiVnx) * 100
-        if util_phiVnx == -100:
-            util_phiVnx = 0
-            works = False
-
-        # Vny
-        util_phiVny = self.check_indiv_util(Vuy, phiVny) * 100
-        if util_phiVny == -100:
-            util_phiVny = 0
-            works = False
-
-        # An
-        util_phiAn = self.check_indiv_util(Au, phiAn) * 100
-        if util_phiAn == -100:
-            util_phiAn = 0
-            works = False
-
-        # Tn
-        util_phiTn = self.check_indiv_util(Tu, phiTn) * 100
-        if util_phiTn == -100:
-            util_phiTn = 0
-            works = False
-
-        if not works:
-            return None
-
-        if works:
-            # calculate total utilization as sum of individual utilizations
-            total_ratio = util_phiMnx + util_phiMny + \
-                util_phiVnx + util_phiVny + util_phiAn + util_phiTn
-            return util_phiMnx, util_phiMny, util_phiVnx, util_phiVny, util_phiAn, util_phiTn, total_ratio
-
 
 if __name__ == '__main__':
     b = 8
