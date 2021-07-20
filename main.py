@@ -1,7 +1,7 @@
 # from tkinter import *
 from tkinter import (Tk, END, Menu)
 from tkinter.filedialog import asksaveasfilename, askopenfilenames
-import shelve
+import json
 from weldapp import Application
 import os
 
@@ -17,24 +17,27 @@ def savedata():
     global app
 
     if filename:
-        with shelve.open(filename, 'c') as shelf:
-            shelf['b'] = float(app.entry_b.get())
-            shelf['d'] = float(app.entry_d.get())
-            shelf['Mux'] = abs(float(app.entry_Mux.get()))
-            shelf['Muy'] = abs(float(app.entry_Muy.get()))
-            shelf['Vux'] = abs(float(app.entry_Vux.get()))
-            shelf['Vuy'] = abs(float(app.entry_Vuy.get()))
-            shelf['Au'] = abs(float(app.entry_Au.get()))
-            shelf['Tu'] = abs(float(app.entry_Tu.get()))
-            shelf['units'] = app.units.get()
-            shelf['considerAngle'] = app.considerAngle.get()
-            shelf['util_setting'] = app.util_setting.get()
-            shelf['weldtype'] = app.weldtype.get()
-            shelf['selected_throat'] = app.selected_throat.get()
-            shelf['selected_hss_thickness'] = app.selected_hss_thickness.get()
-            shelf['selected_weld_group'] = app.selected_weld_group.get()
-            # shelf[''] =
+        vars = {
+            'b' : float(app.entry_b.get()),
+            'd' : float(app.entry_d.get()),
+            'Mux' : abs(float(app.entry_Mux.get())),
+            'Muy' : abs(float(app.entry_Muy.get())),
+            'Vux' : abs(float(app.entry_Vux.get())),
+            'Vuy' : abs(float(app.entry_Vuy.get())),
+            'Au' : abs(float(app.entry_Au.get())),
+            'Tu' : abs(float(app.entry_Tu.get())),
+            'units' : app.units.get(),
+            'considerAngle' : app.considerAngle.get(),
+            'util_setting' : app.util_setting.get(),
+            'weldtype' : app.weldtype.get(),
+            'selected_throat' : app.selected_throat.get(),
+            'selected_hss_thickness' : app.selected_hss_thickness.get(),
+            'selected_weld_group' : app.selected_weld_group.get(),
+            # '' : 
+        }
 
+        with open(filename, 'w') as f:
+            json.dump(vars, f, indent=4)
         set_title(root, filename)
 
     else:
@@ -44,8 +47,8 @@ def savedata():
 def saveasdata():
     global filename
     filename = asksaveasfilename(
-        title='Choose Filename', defaultextension='.db', 
-        filetypes=[('.db Files', '*.db')]).replace('.db', '')
+        title='Choose Filename', defaultextension='.txt', 
+        filetypes=[('.txt Files', '*.txt')])
     print(filename)
     if not filename:
         return
@@ -54,10 +57,10 @@ def saveasdata():
 
 def loaddata():
     global app
+    global filename
 
     try:
-        filename = askopenfilenames(title="Select Weld .txt File")[
-            0].replace('.db', '')
+        filename = askopenfilenames(title="Select Weld .txt File")[0]
         print(filename)
     except IndexError:
         print("No file opened")
@@ -65,38 +68,40 @@ def loaddata():
     print("loaded -> " + filename)
 
     if filename:
-        with shelve.open(filename, 'r') as shelf:
-            app.weldtype.set(shelf['weldtype'])
-            app.selected_throat.set(shelf['selected_throat'])
-            app.selected_hss_thickness.set(shelf['selected_hss_thickness'])
-            app.selected_weld_group.set(shelf['selected_weld_group'])
-            app.units.set(shelf['units'])
-            app.considerAngle.set(shelf['considerAngle'])
-            app.util_setting.set(shelf['util_setting'])
+        with open(filename, 'r') as f:
+            vars = json.load(f)
+
+            app.weldtype.set(vars['weldtype'])
+            app.selected_throat.set(vars['selected_throat'])
+            app.selected_hss_thickness.set(vars['selected_hss_thickness'])
+            app.selected_weld_group.set(vars['selected_weld_group'])
+            app.units.set(vars['units'])
+            app.considerAngle.set(vars['considerAngle'])
+            app.util_setting.set(vars['util_setting'])
 
             app.entry_b.delete(0, END)
-            app.entry_b.insert(0, shelf['b'])
+            app.entry_b.insert(0, vars['b'])
 
             app.entry_d.delete(0, END)
-            app.entry_d.insert(0, shelf['d'])
+            app.entry_d.insert(0, vars['d'])
 
             app.entry_Mux.delete(0, END)
-            app.entry_Mux.insert(0, shelf['Mux'])
+            app.entry_Mux.insert(0, vars['Mux'])
 
             app.entry_Muy.delete(0, END)
-            app.entry_Muy.insert(0, shelf['Muy'])
+            app.entry_Muy.insert(0, vars['Muy'])
 
             app.entry_Vux.delete(0, END)
-            app.entry_Vux.insert(0, shelf['Vux'])
+            app.entry_Vux.insert(0, vars['Vux'])
 
             app.entry_Vuy.delete(0, END)
-            app.entry_Vuy.insert(0, shelf['Vuy'])
+            app.entry_Vuy.insert(0, vars['Vuy'])
 
             app.entry_Au.delete(0, END)
-            app.entry_Au.insert(0, shelf['Au'])
+            app.entry_Au.insert(0, vars['Au'])
 
             app.entry_Tu.delete(0, END)
-            app.entry_Tu.insert(0, shelf['Tu'])
+            app.entry_Tu.insert(0, vars['Tu'])
 
             app.recalc_full()
             set_title(root, filename)
