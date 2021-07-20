@@ -792,7 +792,6 @@ class Application(Frame):
         self.var_phiAn_util.set(f"N/A")
         self.var_phiTn_util.set(f"N/A")
 
-    # TODO: move check_util to weldgroup so it just returns utilizations 
     def check_util(self, property=0, demand=1):
         if property == 0 and demand != 0:
             return None
@@ -801,23 +800,30 @@ class Application(Frame):
         else:
             return demand / property
 
+    def set_total_util(self, total_ratio):
+        """Update total utilization value, setting the text color based on the percentage.
+        Green when weld is ok, orange when above 90%, red when above 100%
+        
+        :param total_ratio: total utilization ratio in percent
+        :type total_ratio: float
+        """
+        if total_ratio <= 90:
+            self.var_total_util.set(f"{total_ratio:.1f} %")
+            self.label_total_utilization.config(
+                font="helvetica 9 bold", fg="green")
+        elif total_ratio <= 100:
+            self.var_total_util.set(f"{total_ratio:.1f} %")
+            self.label_total_utilization.config(
+                font="helvetica 9 bold", fg="orange")
+        else:
+            self.var_total_util.set(f"{total_ratio:.1f} %")
+            self.label_total_utilization.config(
+                font="helvetica 9 bold", fg="red")
+
     def recalc_results(self, *args):
-        ##########  WELD INFORMATION  ##########
-        # take in variables
-        wg = self.selected_weld_group.get()
-        throat = self.sixteenths[self.selected_throat.get()]
-        hss_thickness = self.sixteenths[self.selected_hss_thickness.get()]
-        isFlareBevel = self.weldtype.get() == "fb"
-        considerAngle = self.considerAngle.get()
-
-        # get loading inputs and set up weld group
-        # set N/A and cancel operation if inputs don't work
         try:
-            b = float(self.var_b.get())
-            d = float(self.var_d.get())
-            weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
-                                   isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
-
+            # get loading inputs and set up weld group
+            # set N/A and cancel operation if inputs don't work
             Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0
             Muy = abs(float(self.var_Muy.get())) if self.var_Muy.get() else 0
             Vux = abs(float(self.var_Vux.get())) if self.var_Vux.get() else 0
@@ -825,15 +831,24 @@ class Application(Frame):
             Au = abs(float(self.var_Au.get())) if self.var_Au.get() else 0
             Tu = abs(float(self.var_Tu.get())) if self.var_Tu.get() else 0
 
+            weld_group = WeldGroup(
+                t=self.sixteenths[self.selected_throat.get()], 
+                group=self.selected_weld_group.get(), 
+                b=abs(float(self.var_b.get())), 
+                d=abs(float(self.var_d.get())),
+                isFlareBevel=(self.weldtype.get() == "fb"), 
+                t_HSS=self.sixteenths[self.selected_hss_thickness.get()], 
+                considerAngle=self.considerAngle.get()
+                )
+
         except ValueError:
             self.set_results_NA()
             return
 
-        ##########  SECTION PROPERTIES & LOADS  ##########
         # get section properties from weld group
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
 
-        # update moment unit variables to unit selection
+        # update moment units per unit selection
         if self.units.get() == 'ft':
             self.units_moment.set('kip-ft')
             phiMnx /= 12
@@ -842,25 +857,16 @@ class Application(Frame):
         else:
             self.units_moment.set('kip-in')
 
-        # update variable for selected weld linear strength, section properties
+        # update text variables for selected weld strength, section properties
         self.text_weld_strength.set(f"{weld_group.weld_strength:.2f} kip/in")
-        try:
-            self.var_phiMnx.set(f"{phiMnx:.1f}")
-            self.var_phiMny.set(f"{phiMny:.1f}")
-            self.var_phiVnx.set(f"{phiVnx:.1f}")
-            self.var_phiVny.set(f"{phiVny:.1f}")
-            self.var_phiAn.set(f"{phiAn:.1f}")
-            self.var_phiTn.set(f"{phiTn:.1f}")
-        except AttributeError:
-            print("Failed to set up one or more strength variables.")
+        self.var_phiMnx.set(f"{phiMnx:.1f}")
+        self.var_phiMny.set(f"{phiMny:.1f}")
+        self.var_phiVnx.set(f"{phiVnx:.1f}")
+        self.var_phiVny.set(f"{phiVny:.1f}")
+        self.var_phiAn.set(f"{phiAn:.1f}")
+        self.var_phiTn.set(f"{phiTn:.1f}")
 
-        ##########  UTILIZATION   ##########
-        # Determine whether to even run calcs. The program should not run calcs
-        # if any input is > 0 when the associated property is zero.
-        # In that case, do not draw weld and set total output to 'N/A'
-
-        # for each section property: check for the case mentioned above,
-        # calculate utilization, draw utilization
+        # UTILIZATION
 
         try:
             util_phiMnx = self.check_util(phiMnx, Mux) * 100
@@ -869,7 +875,7 @@ class Application(Frame):
             util_phiVny = self.check_util(phiVny, Vuy) * 100
             util_phiAn = self.check_util(phiAn, Au) * 100
             util_phiTn = self.check_util(phiTn, Tu) * 100
-        except ValueError:
+        except TypeError:
             self.set_results_NA()
         else:
             self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
@@ -887,21 +893,7 @@ class Application(Frame):
                 total_ratio = util_phiMnx + util_phiMny + util_phiVnx \
                     + util_phiVny + util_phiAn + util_phiTn
 
-            # draw utilization value in different colors depending on percentage
-            if total_ratio <= 90:  # green text when weld is ok
-                self.var_total_util.set(f"{total_ratio:.1f} %")
-                self.label_total_utilization.config(
-                    font="helvetica 9 bold", fg="green")
-
-            elif total_ratio <= 100:  # orange text when color is between 90 and 100
-                self.var_total_util.set(f"{total_ratio:.1f} %")
-                self.label_total_utilization.config(
-                    font="helvetica 9 bold", fg="orange")
-
-            else:  # red text when percentage is above 100
-                self.var_total_util.set(f"{total_ratio:.1f} %")
-                self.label_total_utilization.config(
-                    font="helvetica 9 bold", fg="red")
+            self.set_total_util(total_ratio)
 
     def recalc_full(self, *args):  # *args is necessary to trace variables with function
         """
