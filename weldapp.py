@@ -51,7 +51,6 @@ class Application(Frame):
             self.columnconfigure(i, weight=2)
         for i in range(2, 4):
             self.columnconfigure(i, weight=1)
-
         self.rowconfigure(1, weight=2)
         self.rowconfigure(2, weight=2)
         self.rowconfigure(3, weight=3)
@@ -62,7 +61,7 @@ class Application(Frame):
         self.f_weld_type.grid(row=0, column=0, padx=(
             25, 5), pady=(10, 0), sticky='nesw')
 
-        ### variables ###
+        # VARIABLES
         # options for hss thickness
         self.hss_thickness_options = ["1/8\"",
                                       "3/16\"",
@@ -111,8 +110,8 @@ class Application(Frame):
         self.text_weld_strength = StringVar(self)
         self.text_weld_strength.set("-- kip/in")
 
-        ### widgets ###
-
+        # WIDGETS
+        # common variables
         self.PADX_WELD_TYPE = (5, 0)
         self.PADY_WELD_TYPE = (0, 0)
         self.DROPDOWN_WIDTH = 4
@@ -166,19 +165,17 @@ class Application(Frame):
         self.label_linear_strength.grid(
             row=5, column=1, pady=(0, 10), sticky='nsw')
 
+        # enable resizing
         for i in range(10):
             self.f_weld_type.rowconfigure(i, weight=1)
             self.f_weld_type.columnconfigure(i, weight=1)
 
-        # self.columnconfigure(1, weight=2)
-
     def draw_weldgroup(self):
-        self.f_weld_group = LabelFrame(
-            self, text="Weld Group")  # height=230, width=230
-        self.f_weld_group.grid(row=1, column=0, padx=(
-            25, 5), pady=(10, 0), sticky='nesw')
+        self.f_weld_group = LabelFrame(self, text="Weld Group")
+        self.f_weld_group.grid(row=1, column=0, padx=(25, 5),
+                               pady=(10, 0), sticky='nesw')
 
-        ### variables ###
+        # VARIABLES
         self.weld_group_options = ['|',
                                    '-',
                                    '||',
@@ -195,9 +192,8 @@ class Application(Frame):
         self.selected_weld_group.set(
             self.weld_group_options[self.weld_group_options.index("=")])  # default value
 
-        ### widgets ###
-
-        # tuple that allows correct placement of the widgets
+        # WIDGETS
+        # common variables
         self.PADX_WELD_GROUP = (25, 0)
         self.PADY_WELD_GROUP = (5, 5)
 
@@ -322,8 +318,7 @@ class Application(Frame):
         self.f_loads.grid(row=0, column=1, padx=(5, 5),
                           pady=(10, 0), sticky='nesw', rowspan=1)
 
-        ### widgets ###
-
+        # common variables
         self.PADX_LOADING = (30, 0)
         self.PADY_LOADING = (0, 0)
 
@@ -419,8 +414,8 @@ class Application(Frame):
         self.f_results.grid(row=1, column=1, rowspan=2,
                             padx=(5, 5), pady=(10, 0), sticky='nesw')
 
-        ### widgets ###
-
+        # WIDGETS
+        # common variables
         self.PADX_RESULTS = (5, 0)
         self.PADY_RESULTS = (5, 0)
         self.PADX_RESULTS_UNITS = (10, 0)
@@ -801,9 +796,9 @@ class Application(Frame):
             return demand / property
 
     def set_total_util(self, total_ratio):
-        """Update total utilization value, setting the text color based on the percentage.
+        """Update total utilization value, set text color based on the percentage.
         Green when weld is ok, orange when above 90%, red when above 100%
-        
+
         :param total_ratio: total utilization ratio in percent
         :type total_ratio: float
         """
@@ -832,14 +827,14 @@ class Application(Frame):
             Tu = abs(float(self.var_Tu.get())) if self.var_Tu.get() else 0
 
             weld_group = WeldGroup(
-                t=self.sixteenths[self.selected_throat.get()], 
-                group=self.selected_weld_group.get(), 
-                b=abs(float(self.var_b.get())), 
+                t=self.sixteenths[self.selected_throat.get()],
+                group=self.selected_weld_group.get(),
+                b=abs(float(self.var_b.get())),
                 d=abs(float(self.var_d.get())),
-                isFlareBevel=(self.weldtype.get() == "fb"), 
-                t_HSS=self.sixteenths[self.selected_hss_thickness.get()], 
+                isFlareBevel=(self.weldtype.get() == "fb"),
+                t_HSS=self.sixteenths[self.selected_hss_thickness.get()],
                 considerAngle=self.considerAngle.get()
-                )
+            )
 
         except ValueError:
             self.set_results_NA()
@@ -867,7 +862,6 @@ class Application(Frame):
         self.var_phiTn.set(f"{phiTn:.1f}")
 
         # UTILIZATION
-
         try:
             util_phiMnx = self.check_util(phiMnx, Mux) * 100
             util_phiMny = self.check_util(phiMny, Muy) * 100
@@ -888,7 +882,7 @@ class Application(Frame):
             # calculate total utilization as sum of individual utilizations
             if self.util_setting.get() == 'srss':
                 total_ratio = (util_phiMnx**2 + util_phiMny**2 + util_phiVnx**2
-                            + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
+                               + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
             else:
                 total_ratio = util_phiMnx + util_phiMny + util_phiVnx \
                     + util_phiVny + util_phiAn + util_phiTn
@@ -912,7 +906,7 @@ class Application(Frame):
             self.set_results_NA()
         finally:
             self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
-                        canvas=self.canvas)
+                           canvas=self.canvas)
 
     def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
                       phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
