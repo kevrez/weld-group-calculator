@@ -44,15 +44,6 @@ class Application(Frame):
         # add trace functions to Tk inputs
         self.add_traces()
 
-        # draw CALCULATE button
-        # self.run_button = Button(self, text="RECALCULATE", command=self.recalc_full, pady=5, padx=10)
-        # self.run_button.grid(row=3, column=2, pady=(5, 0), padx=(15, 10), sticky='nesw')
-        # # self.run_button["state"] = "normal"
-
-        # # draw RESET PLOT buton
-        # self.reset_plot_button = Button(self, text="RESET PLOT", command=self.reset_plot, pady=5, padx=10)
-        # self.reset_plot_button.grid(row=3, column=3, pady=(5, 0), padx=(5, 25), sticky='nesw')
-
         # enable resizing to follow window size
         for i in range(2):
             self.rowconfigure(i, weight=1)
@@ -824,7 +815,6 @@ class Application(Frame):
         try:
             b = float(self.var_b.get())
             d = float(self.var_d.get())
-
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                                    isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
 
@@ -835,8 +825,7 @@ class Application(Frame):
             Au = abs(float(self.var_Au.get())) if self.var_Au.get() else 0
             Tu = abs(float(self.var_Tu.get())) if self.var_Tu.get() else 0
 
-        except ValueError as e:
-            # print(e)
+        except ValueError:
             self.set_results_NA()
             return
 
@@ -913,7 +902,6 @@ class Application(Frame):
                 self.var_total_util.set(f"{total_ratio:.1f} %")
                 self.label_total_utilization.config(
                     font="helvetica 9 bold", fg="red")
-
 
     def recalc_full(self, *args):  # *args is necessary to trace variables with function
         """
