@@ -12,7 +12,6 @@ from tkinter import (
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from datetime import datetime
-
 from weldgroup import WeldGroup
 
 
@@ -67,7 +66,6 @@ class Application(Frame):
         self.rowconfigure(3, weight=3)
 
     def draw_weldtype(self):
-
         self.f_weld_type = LabelFrame(
             self, text="Weld Type")  # height=230, width=230
         self.f_weld_type.grid(row=0, column=0, padx=(
@@ -184,7 +182,6 @@ class Application(Frame):
         # self.columnconfigure(1, weight=2)
 
     def draw_weldgroup(self):
-
         self.f_weld_group = LabelFrame(
             self, text="Weld Group")  # height=230, width=230
         self.f_weld_group.grid(row=1, column=0, padx=(
@@ -266,7 +263,6 @@ class Application(Frame):
         self.f_weld_group.rowconfigure(1, weight=2)
 
     def draw_settings(self):
-
         STICKY_RADIO = 'nsw'
 
         self.f_settings = LabelFrame(
@@ -331,7 +327,6 @@ class Application(Frame):
             self.f_settings.rowconfigure(i, weight=1)
 
     def draw_loads(self):
-
         self.f_loads = LabelFrame(self, text="Loads")  # height=230, width=230
         self.f_loads.grid(row=0, column=1, padx=(5, 5),
                           pady=(10, 0), sticky='nesw', rowspan=1)
@@ -425,13 +420,11 @@ class Application(Frame):
             self.f_loads.columnconfigure(i, weight=1)
 
     def draw_results(self):
-
         self.f_results = LabelFrame(self, text="Results")
 
         for i in range(10):
             self.f_results.rowconfigure(i, weight=2)
             self.f_results.columnconfigure(i, weight=2)
-
         self.f_results.grid(row=1, column=1, rowspan=2,
                             padx=(5, 5), pady=(10, 0), sticky='nesw')
 
@@ -596,7 +589,6 @@ class Application(Frame):
             self.f_results.columnconfigure(i, weight=1)
 
     def draw_preview(self):
-
         self.f_plot = LabelFrame(self, text="Preview")
 
         for i in range(10):
@@ -643,15 +635,12 @@ class Application(Frame):
         self.var_Vuy.trace_add('write', self.recalc_results)
         self.var_Au.trace_add('write', self.recalc_results)
         self.var_Tu.trace_add('write', self.recalc_results)
-
         self.var_b.trace_add('write', self.recalc_full)
         self.var_d.trace_add('write', self.recalc_full)
         self.selected_weld_group.trace_add('write', self.recalc_full)
 
     def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
-
         ax1.clear()
-
         ax1.axvline(color='black', linestyle=':')
         ax1.axhline(color='black', linestyle=':')
         ax1.set(xlabel='Y', ylabel='X')
@@ -801,7 +790,6 @@ class Application(Frame):
         self.tkwidget.destroy()
         self.draw_plot()
         self.recalc_full()
-        # self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d, tk_master=self.f_plot, works=works, canvas=self.canvas, toolbar=None)
 
     def set_results_NA(self):
         self.var_total_util.set("N/A")
@@ -813,7 +801,16 @@ class Application(Frame):
         self.var_phiAn_util.set(f"N/A")
         self.var_phiTn_util.set(f"N/A")
 
-    def recalc_results(self, works=True, *args):
+    # TODO: move check_util to weldgroup so it just returns utilizations 
+    def check_util(self, property=0, demand=1):
+        if property == 0 and demand != 0:
+            return None
+        elif property == 0 and demand == 0:
+            return 0
+        else:
+            return demand / property
+
+    def recalc_results(self, *args):
         ##########  WELD INFORMATION  ##########
         # take in variables
         wg = self.selected_weld_group.get()
@@ -822,13 +819,23 @@ class Application(Frame):
         isFlareBevel = self.weldtype.get() == "fb"
         considerAngle = self.considerAngle.get()
 
-        # set up weld group, and if it fails, set N/A and cancel operation
+        # get loading inputs and set up weld group
+        # set N/A and cancel operation if inputs don't work
         try:
             b = float(self.var_b.get())
             d = float(self.var_d.get())
+
             weld_group = WeldGroup(t=throat, group=wg, b=b, d=d,
                                    isFlareBevel=isFlareBevel, t_HSS=hss_thickness, considerAngle=considerAngle)
-        except Exception as e:
+
+            Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0
+            Muy = abs(float(self.var_Muy.get())) if self.var_Muy.get() else 0
+            Vux = abs(float(self.var_Vux.get())) if self.var_Vux.get() else 0
+            Vuy = abs(float(self.var_Vuy.get())) if self.var_Vuy.get() else 0
+            Au = abs(float(self.var_Au.get())) if self.var_Au.get() else 0
+            Tu = abs(float(self.var_Tu.get())) if self.var_Tu.get() else 0
+
+        except ValueError as e:
             # print(e)
             self.set_results_NA()
             return
@@ -836,14 +843,6 @@ class Application(Frame):
         ##########  SECTION PROPERTIES & LOADS  ##########
         # get section properties from weld group
         phiMnx, phiMny, phiVnx, phiVny, phiAn, phiTn = weld_group.properties()
-
-        # get all loading inputs
-        Mux = abs(float(self.var_Mux.get())) if self.var_Mux.get() else 0
-        Muy = abs(float(self.var_Muy.get())) if self.var_Muy.get() else 0
-        Vux = abs(float(self.var_Vux.get())) if self.var_Vux.get() else 0
-        Vuy = abs(float(self.var_Vuy.get())) if self.var_Vuy.get() else 0
-        Au = abs(float(self.var_Au.get())) if self.var_Au.get() else 0
-        Tu = abs(float(self.var_Tu.get())) if self.var_Tu.get() else 0
 
         # update moment unit variables to unit selection
         if self.units.get() == 'ft':
@@ -874,80 +873,27 @@ class Application(Frame):
         # for each section property: check for the case mentioned above,
         # calculate utilization, draw utilization
 
-        # TODO: Put individual checks into a function
+        try:
+            util_phiMnx = self.check_util(phiMnx, Mux) * 100
+            util_phiMny = self.check_util(phiMny, Muy) * 100
+            util_phiVnx = self.check_util(phiVnx, Vux) * 100
+            util_phiVny = self.check_util(phiVny, Vuy) * 100
+            util_phiAn = self.check_util(phiAn, Au) * 100
+            util_phiTn = self.check_util(phiTn, Tu) * 100
+        except ValueError:
+            self.set_results_NA()
+        else:
+            self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
+            self.var_phiMny_util.set(f"{util_phiMny:.1f} %")
+            self.var_phiVnx_util.set(f"{util_phiVnx:.1f} %")
+            self.var_phiVny_util.set(f"{util_phiVny:.1f} %")
+            self.var_phiAn_util.set(f"{util_phiAn:.1f} %")
+            self.var_phiTn_util.set(f"{util_phiTn:.1f} %")
 
-        # Mnx
-        if works:
-            if (phiMnx == 0) and (Mux != 0):  # force inputted but zero for the section property
-                self.var_phiMnx_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiMnx = Mux / phiMnx * 100  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiMnx = 0
-                self.var_phiMnx_util.set(f"{util_phiMnx:.1f} %")
-
-            # Mny
-            if (phiMny == 0) and (Muy != 0):  # force inputted but zero for the section property
-                self.var_phiMny_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiMny = Muy / phiMny * 100  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiMny = 0
-                self.var_phiMny_util.set(f"{util_phiMny:.1f} %")
-
-            # Vnx
-            if (phiVnx == 0) and (Vux != 0):  # force inputted but zero for the section property
-                self.var_phiVnx_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiVnx = Vux / phiVnx * 100  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiVnx = 0
-                self.var_phiVnx_util.set(f"{util_phiVnx:.1f} %")
-
-            # Vny
-            if (phiVny == 0) and (Vuy != 0):  # force inputted but zero for the section property
-                self.var_phiVny_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiVny = Vuy / phiVny * 100  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiVny = 0
-                self.var_phiVny_util.set(f"{util_phiVny:.1f} %")
-
-            # An
-            if (phiAn == 0) and (Au != 0):  # force inputted but zero for the section property
-                self.var_phiAn_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiAn = Au / phiAn * 100  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiAn = 0
-                self.var_phiAn_util.set(f"{util_phiAn:.1f} %")
-
-            # Tn
-            if (phiTn == 0) and (Tu != 0):  # force inputted but zero for the section property
-                self.var_phiTn_util.set("N/A")
-                works = False
-            else:
-                try:
-                    util_phiTn = (Tu / phiTn * 100)  # individual utilization
-                except ZeroDivisionError:  # in case we get a 0/0
-                    util_phiTn = 0
-                self.var_phiTn_util.set(f"{util_phiTn:.1f} %")
-
-        if works:
             # calculate total utilization as sum of individual utilizations
             if self.util_setting.get() == 'srss':
                 total_ratio = (util_phiMnx**2 + util_phiMny**2 + util_phiVnx**2
-                               + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
+                            + util_phiVny**2 + util_phiAn**2 + util_phiTn**2)**0.5
             else:
                 total_ratio = util_phiMnx + util_phiMny + util_phiVnx \
                     + util_phiVny + util_phiAn + util_phiTn
@@ -968,33 +914,28 @@ class Application(Frame):
                 self.label_total_utilization.config(
                     font="helvetica 9 bold", fg="red")
 
-        else:
-            self.set_results_NA()
 
     def recalc_full(self, *args):  # *args is necessary to trace variables with function
         """
         Take in inputs from GUI, calculate outputs, draw outputs.
         """
         # print('Full Recalc')
-        works = True
         wg = self.selected_weld_group.get()
         try:
-            b = float(self.var_b.get())
-            d = float(self.var_d.get())
+            b = float(self.var_b.get()) if self.var_b.get() else 0
+            d = float(self.var_d.get()) if self.var_d.get() else 0
+            self.recalc_results()
         except ValueError:
+            # print('ValueError in recalc full')
             b = 0
             d = 0
-            works = False
-            pass
-
-        # plot preview of weld group
-        self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
-                       canvas=self.canvas)
-        self.recalc_results(works=works)
+            self.set_results_NA()
+        finally:
+            self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
+                        canvas=self.canvas)
 
     def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
                       phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
-
         print(f"weld group is {wg}")
         print(f"weld type is {weldtype.get()}")
         print(f"throat is {throat}")
