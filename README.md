@@ -13,7 +13,7 @@ The equations utilized in the program for each weld group are enumerated in this
 It is the engineer's responsibility to determine adequacy of design.
 This tool is merely intended to aid in simplifying the design process.**
 
-# Documentation: 
+## Documentation: 
 In this program, weld strength is calculated using the provisions in AISC Section J, assuming E70XX electrodes and SMAW welding. 
 The basic formula used to calculate the linear weld strength of a given size is:
 
@@ -24,7 +24,7 @@ The &phi; value included in &phi;R<sub>n</sub> is the only strength reduction fa
 
 Individual section properties are calculated by treating welds as lines, and using formulas provided by Omer W. Blodgett in *Design of Weldments* (1976), and *Welded Connections* by Blodgett et al. (1999) to determine weld group section properties. 
 
-## Load Angle
+### Load Angle
 In this program, the load angle effect described by AISC in Section J is considered at the user's option. 
 Section J allows for an increase of up to 50% in the calculated weld strength for weld in groups with loading perpendicular to the line of the weld. 
 This increase, however, must be accompanied by a reduction of 15% in the calculated strength of welds loaded parallel to the line of the weld. 
@@ -34,7 +34,7 @@ Expressed as equations, the user is allowed to take the maximum of the following
 
 - R<sub>n</sub> = 0.85 • R<sub>nwl</sub> + 1.5 • R<sub>nwt</sub> (Equation J2-6b)
 
-## Moment:
+### Moment:
 Moment capacity is calculated from the section modulus (S<sub>x</sub> or S<sub>y</sub>) formulas provided by Blodgett. 
 The section modulus given the weld group geometry is multiplied by the linear strength of the selected weld to obtain a moment capacity.
 
@@ -45,7 +45,7 @@ where S is the section modulus about a given axis.
 Weld groups with asymmetrical shapes have multiple values for S<sub>x</sub>, related to the top and bottom of the weld group. 
 This program uses the minimum of the two values (S<sub>X<sub>t</sub></sub> and S<sub>X<sub>b</sub></sub>) as the group's section modulus in order to determine the strength of the section.
 
-## Shear & Axial Forces
+### Shear & Axial Forces
 Shear and axial capacities are calculated by multiplying the total linear length of weld by the weld strength. 
 
 - &phi;V<sub>n</sub> = &phi;R<sub>n</sub> • L
@@ -55,7 +55,7 @@ where L is the length of the given weld, and &phi;R<sub>n</sub> considers the lo
 
 When the effect of the loading angle is considered, shear and axial strengths are calculated by adding the strength of each individual weld with respect to the direction it is loaded.
 
-## Torsion
+### Torsion
 Torsional strength is calculated by calculating the polar section modulus (PM) by dividing J, the torsional constant by c, the average distance to centroid. 
 This modulus is multiplied by the linear weld strength to obtain a strength in kip-inches. 
 
@@ -64,7 +64,7 @@ This modulus is multiplied by the linear weld strength to obtain a strength in k
 
 When the effect of the load angle is considered with respect to torsion, the weld strength is considered to always be multiplied by the 0.85 factor from equation J2-6b.
 
-## Utilization & Interaction
+### Utilization & Interaction
 Utilization values are calculated differently than the method that Blodgett suggests in *Welded Connections*. The approach used is based on the same root principles, but was selected due to added ease of implementation:
 - Determine the maximum loading on the weld group, considering moment in each direction, shear in each direction, axial force, and torsional force
 - Calculate the section moduli and effective lengths of the weld group
@@ -74,9 +74,9 @@ Utilization values are calculated differently than the method that Blodgett sugg
 - Combine the individual utilization ratios, either by adding them directly, or by using the square-root-of-sum-of-squares (SRSS) method
 - Determine whether the section has sufficient strength by comparing the total utilization to 1.0. If a value above 1.0 is obtained, the section is insufficient to resist the required loading, and the weld must be upsized or the section geometry updated
 
-## Section Property Formulas
+### Section Property Formulas
 
-### Factors
+#### Factors
 When load angle is not considered:
 
 - f<sub>T</sub> = 1.0 (transverse factor)
@@ -89,7 +89,7 @@ When load angle is considered:
 
 - f<sub>L</sub> = 0.85 (longitudinal factor)
 
-### Weld Group 1: |  Single Vertical Line:
+#### Weld Group 1: |  Single Vertical Line:
 - L<sub>V<sub>x</sub></sub> = d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = d • f<sub>L</sub>
@@ -106,7 +106,7 @@ When load angle is considered:
 
 - PM = 0
 
-### Weld Group 2: - Single Horizontal Line:
+#### Weld Group 2: - Single Horizontal Line:
 - L<sub>V<sub>x</sub></sub> = b • f<sub>L</sub>
 
 - L<sub>V<sub>y</sub></sub> = b • f<sub>T</sub>
@@ -123,7 +123,7 @@ When load angle is considered:
 
 - PM = 0
 
-### Weld Group 3: || Two Parallel Vertical Lines:
+#### Weld Group 3: || Two Parallel Vertical Lines:
 - L<sub>V<sub>x</sub></sub> = 2 • d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = 2 • d • f<sub>L</sub>
@@ -141,7 +141,7 @@ When load angle is considered:
 - PM = J / c
 
 
-### Weld Group 4: = Two Parallel Horizontal Lines:
+#### Weld Group 4: = Two Parallel Horizontal Lines:
 - L<sub>V<sub>x</sub></sub> = 2 • b • f<sub>L</sub>
 
 - L<sub>V<sub>y</sub></sub> = 2 • b • f<sub>T</sub>
@@ -158,7 +158,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 5: ▯ Rectangle:
+#### Weld Group 5: ▯ Rectangle:
 - L<sub>V<sub>x</sub></sub> = 2b • f<sub>L</sub> + 2d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = 2b • f<sub>T</sub> + 2d • f<sub>L</sub>
@@ -175,7 +175,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 6: ⨅ Top Three Sides of a Rectangle:
+#### Weld Group 6: ⨅ Top Three Sides of a Rectangle:
 - L<sub>V<sub>x</sub></sub> = b • f<sub>L</sub> + 2d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = b • f<sub>T</sub> + 2d • f<sub>L</sub>
@@ -198,7 +198,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 7: ╥ Web and Flange of T- or ⌶-Section: 
+#### Weld Group 7: ╥ Web and Flange of T- or ⌶-Section: 
 - L<sub>V<sub>x</sub></sub> = b • f<sub>L</sub> + 2d • f<sub>T</sub>
 
 - L<sub>V<sub>y</sub></sub> = b • f<sub>T</sub> + 2d • f<sub>L</sub>
@@ -225,7 +225,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 8: ╦ Web and Top Flange Perimeter of T- or ⌶-Section: 
+#### Weld Group 8: ╦ Web and Top Flange Perimeter of T- or ⌶-Section: 
 - L<sub>V<sub>x</sub></sub> = 2 • (b • f<sub>L</sub> + d • f<sub>T</sub>)
 
 - L<sub>V<sub>y</sub></sub> = 2 • (b • f<sub>T</sub> + d • f<sub>L</sub>)
@@ -252,7 +252,7 @@ When load angle is considered:
 
 - PM = J / c
 
-### Weld Group 9: ⌶ - Full Perimeter of an ⌶-Section):
+#### Weld Group 9: ⌶ - Full Perimeter of an ⌶-Section):
 - L<sub>V<sub>x</sub></sub> = 2 • (2b • f<sub>L</sub> + d • f<sub>T</sub>)
 
 - L<sub>V<sub>y</sub></sub> = 2 • (2b • f<sub>T</sub> + d • f<sub>L</sub>)
@@ -269,7 +269,7 @@ When load angle is considered:
 
 - PM = J / c
 
-## Section Properties
+### Section Properties
 Note: f<sub>T</sub> and f<sub>L</sub> are applied for shear and axial properties when calculating the 'effective' length of weld within the weld group, and thus do not appear in the equations below.
 
 - &phi;M<sub>nx</sub> = &phi;R<sub>n</sub> • S<sub>x</sub> • f<sub>T</sub>
@@ -284,8 +284,8 @@ Note: f<sub>T</sub> and f<sub>L</sub> are applied for shear and axial properties
 
 - &phi;T<sub>n</sub> = &phi;R<sub>n</sub> • PM • f<sub>L</sub>
 
-## Utilization Interaction
-### Direct Sum
+### Utilization Interaction
+#### Direct Sum
 - U/R<sub> total</sub> = M<sub>ux</sub>/&phi;M<sub>nx</sub> + M<sub>uy</sub>/&phi;M<sub>ny</sub> + V<sub>ux</sub>/&phi;V<sub>nx</sub> + V<sub>uy</sub>/&phi;V<sub>ny</sub> + A<sub>u</sub>/&phi;A<sub>n</sub> + T<sub>u</sub>/&phi;T<sub>n</sub>
-### Square Root of Sum of Squares (SRSS)
+#### Square Root of Sum of Squares (SRSS)
 - U/R<sub> total</sub> = ( (M<sub>ux</sub>/&phi;M<sub>nx</sub>)<sup>2</sup> + (M<sub>uy</sub>/&phi;M<sub>ny</sub>)<sup>2</sup> + (V<sub>ux</sub>/&phi;V<sub>nx</sub>)<sup>2</sup> + (V<sub>uy</sub>/&phi;V<sub>ny</sub>)<sup>2</sup> + (A<sub>u</sub>/&phi;A<sub>n</sub>)<sup>2</sup> + (T<sub>u</sub>/&phi;T<sub>n</sub>)<sup>2</sup> )<sup>1/2</sup>
