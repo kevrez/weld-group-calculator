@@ -15,13 +15,17 @@ from datetime import datetime
 from weldgroup import WeldGroup
 
 
-class Application(Frame):
+class Application(Frame): 
+# subclass Tkinter's Frame so this app can be modular
+# other apps can be launched with other Frames placed in tabs or windows
+# future intent is for Welds to be a module among others
 
     def __init__(self, master, version):
         self.VERSION = version
         super().__init__(master)
         self.grid()
         self.draw_ui()
+
 
     def draw_ui(self):
         self.title_status = Label(self, text="Weld Type: E70XX  -  AISC 360")
@@ -54,6 +58,7 @@ class Application(Frame):
         self.rowconfigure(1, weight=2)
         self.rowconfigure(2, weight=2)
         self.rowconfigure(3, weight=3)
+
 
     def draw_weldtype(self):
         self.f_weld_type = LabelFrame(
@@ -170,6 +175,7 @@ class Application(Frame):
             self.f_weld_type.rowconfigure(i, weight=1)
             self.f_weld_type.columnconfigure(i, weight=1)
 
+
     def draw_weldgroup(self):
         self.f_weld_group = LabelFrame(self, text="Weld Group")
         self.f_weld_group.grid(row=1, column=0, padx=(25, 5),
@@ -249,6 +255,7 @@ class Application(Frame):
 
         self.f_weld_group.rowconfigure(1, weight=2)
 
+
     def draw_settings(self):
         STICKY_RADIO = 'nsw'
 
@@ -312,6 +319,7 @@ class Application(Frame):
             self.f_settings.columnconfigure(i, weight=1)
         for i in range(6):
             self.f_settings.rowconfigure(i, weight=1)
+
 
     def draw_loads(self):
         self.f_loads = LabelFrame(self, text="Loads")  # height=230, width=230
@@ -404,6 +412,7 @@ class Application(Frame):
         for i in range(10):
             self.f_loads.rowconfigure(i, weight=1)
             self.f_loads.columnconfigure(i, weight=1)
+
 
     def draw_results(self):
         self.f_results = LabelFrame(self, text="Results")
@@ -574,6 +583,7 @@ class Application(Frame):
             self.f_results.rowconfigure(i, weight=1)
             self.f_results.columnconfigure(i, weight=1)
 
+
     def draw_preview(self):
         self.f_plot = LabelFrame(self, text="Preview")
 
@@ -586,6 +596,7 @@ class Application(Frame):
 
         # draw plot
         self.draw_plot()
+
 
     def draw_plot(self):
         self.fig1, self.ax1 = plt.subplots(
@@ -608,7 +619,10 @@ class Application(Frame):
         self.tkwidget = self.canvas.get_tk_widget()
         self.tkwidget.grid(sticky='nsew')
 
+
     def add_traces(self):
+        """Make specific recalc functions get called with variable updates.
+        """
         self.weldtype.trace_add('write', self.recalc_results)
         self.selected_hss_thickness.trace_add('write', self.recalc_results)
         self.selected_throat.trace_add('write', self.recalc_results)
@@ -624,6 +638,7 @@ class Application(Frame):
         self.var_b.trace_add('write', self.recalc_full)
         self.var_d.trace_add('write', self.recalc_full)
         self.selected_weld_group.trace_add('write', self.recalc_full)
+
 
     def plot_weld(self, fig1, ax1, group: str = "=", b: float = 0, d: float = 0, canvas=None):
         ax1.clear()
@@ -772,10 +787,12 @@ class Application(Frame):
         # toolbar.update()
         canvas.draw()
 
+
     def reset_plot(self):
         self.tkwidget.destroy()
         self.draw_plot()
         self.recalc_full()
+
 
     def set_results_NA(self):
         self.var_total_util.set("N/A")
@@ -787,13 +804,24 @@ class Application(Frame):
         self.var_phiAn_util.set(f"N/A")
         self.var_phiTn_util.set(f"N/A")
 
+
     def check_util(self, property=0, demand=1):
+        """Return the strength utilization of a given property. Return None if 
+
+        Args:
+            property (int, optional): Strength of given property. Defaults to 0.
+            demand (int, optional): Demand for given property from loading. Defaults to 1.
+
+        Returns:
+            float: utilzation of given property
+        """
         if property == 0 and demand != 0:
             return None
         elif property == 0 and demand == 0:
             return 0
         else:
             return demand / property
+
 
     def set_total_util(self, total_ratio):
         """Update total utilization value, set text color based on the percentage.
@@ -815,7 +843,13 @@ class Application(Frame):
             self.label_total_utilization.config(
                 font="helvetica 9 bold", fg="red")
 
+
     def recalc_results(self, *args):
+        """
+        Get inputs from GUI, calculate outputs, update dresults.
+        NOTE: *args is necessary for Tk variables to be able to trace this function
+        """
+
         try:
             # get loading inputs and set up weld group
             # set N/A and cancel operation if inputs don't work
@@ -889,9 +923,10 @@ class Application(Frame):
 
             self.set_total_util(total_ratio)
 
+
     def recalc_full(self, *args):  # *args is necessary to trace variables with function
         """
-        Take in inputs from GUI, calculate outputs, draw outputs.
+        Get inputs from GUI, calculate outputs, draw outputs.
         """
         # print('Full Recalc')
         wg = self.selected_weld_group.get()
@@ -908,8 +943,13 @@ class Application(Frame):
             self.plot_weld(self.fig1, self.ax1, group=wg, b=b, d=d,
                            canvas=self.canvas)
 
+
     def print_summary(self, wg, weldtype, throat, weld_strength, phiMnx, phiMny,
                       phiVnx, phiVny, phiAn, phiTn, Mux, Muy, Vux, Vuy, Au, Tu, isFlareBevel, hss_thickness):
+        """Print a full summary of the state of the variables for debugging 
+           and testing purposes along Uzun+Case engineers. 
+           Some variables require using .get() from Tk variables.
+        """
         print(f"weld group is {wg}")
         print(f"weld type is {weldtype.get()}")
         print(f"throat is {throat}")

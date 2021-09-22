@@ -52,10 +52,6 @@ class WeldGroup:
         trans_factor = (1 + 0.5*considerAngle)  # longitudinal loading
         long_factor = (1 - 0.15*considerAngle)  # transverse loading
 
-        # print(f'trans_factor is {trans_factor}')
-        # print(f'long_factor is {long_factor}')
-        # print()
-
         # round small group dimensions to zero in case of typos
         if (b < 1.0) and (d < 1.0):  # checked
             lenVx = 0
