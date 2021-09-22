@@ -8,7 +8,7 @@ import os
 # NOTE: IN THIS PROGRAM, SECTION PROPERTIES ARE ALWAYS INPUTTED AND PROCESSED
 # IN THE FOLLOWING ORDER: MOMENT-X, MOMENT-Y, SHEAR-X, SHEAR-Y, AXIAL, TORSION
 
-VERSION = '0.91 Beta  -  DO NOT USE FOR DESIGN'
+VERSION = '0.92 Beta  -  DO NOT USE FOR DESIGN'
 TITLE = 'Weld Group Strength Calculator'
 
 
@@ -18,22 +18,21 @@ def savedata():
 
     if filename:
         vars = {
-            'b' : float(app.entry_b.get()),
-            'd' : float(app.entry_d.get()),
-            'Mux' : abs(float(app.entry_Mux.get())),
-            'Muy' : abs(float(app.entry_Muy.get())),
-            'Vux' : abs(float(app.entry_Vux.get())),
-            'Vuy' : abs(float(app.entry_Vuy.get())),
-            'Au' : abs(float(app.entry_Au.get())),
-            'Tu' : abs(float(app.entry_Tu.get())),
-            'units' : app.units.get(),
-            'considerAngle' : app.considerAngle.get(),
-            'util_setting' : app.util_setting.get(),
-            'weldtype' : app.weldtype.get(),
-            'selected_throat' : app.selected_throat.get(),
-            'selected_hss_thickness' : app.selected_hss_thickness.get(),
-            'selected_weld_group' : app.selected_weld_group.get(),
-            # '' : 
+            'b': float(app.entry_b.get()) if app.entry_b.get() != "" else 0,
+            'd': float(app.entry_d.get()) if app.entry_d.get() != "" else 0,
+            'Mux': float(app.entry_Mux.get()) if app.entry_Mux.get() != "" else 0,
+            'Muy': float(app.entry_Muy.get()) if app.entry_Muy.get() != "" else 0,
+            'Vux': float(app.entry_Vux.get()) if app.entry_Vux.get() != "" else 0,
+            'Vuy': float(app.entry_Vuy.get()) if app.entry_Vuy.get() != "" else 0,
+            'Au': float(app.entry_Au.get()) if app.entry_Au.get() != "" else 0,
+            'Tu': float(app.entry_Tu.get()) if app.entry_Tu.get() != "" else 0,
+            'units': app.units.get(),
+            'considerAngle': app.considerAngle.get(),
+            'util_setting': app.util_setting.get(),
+            'weldtype': app.weldtype.get(),
+            'selected_throat': app.selected_throat.get(),
+            'selected_hss_thickness': app.selected_hss_thickness.get(),
+            'selected_weld_group': app.selected_weld_group.get(),
         }
 
         with open(filename, 'w') as f:
@@ -47,7 +46,7 @@ def savedata():
 def saveasdata():
     global filename
     filename = asksaveasfilename(
-        title='Choose Filename', defaultextension='.txt', 
+        title='Choose Filename', defaultextension='.txt',
         filetypes=[('.txt Files', '*.txt')])
     print(filename)
     if not filename:
